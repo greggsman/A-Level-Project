@@ -349,8 +349,9 @@
 -r:"Library/Bee/artifacts/200b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/200b0aE.dag/UnityEngine.UI.ref.dll"
 "Assets/Scripts/DataManager.cs"
-"Assets/Scripts/LoadFiles.cs"
+"Assets/Scripts/FileUI.cs"
 "Assets/Scripts/Setting.cs"
+"Assets/Scripts/SimulationDataManager.cs"
 -langversion:9.0
 
 /deterministic

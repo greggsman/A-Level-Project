@@ -17,7 +17,7 @@ public class Setting : MonoBehaviour
 
     private void Awake()
     {
-        datamanager = GetComponentInParent<DataManager>();
+        datamanager = FindObjectOfType<DataManager>();
         datamanager.commitEvent += FormatSettings;
     }
     private void Start()

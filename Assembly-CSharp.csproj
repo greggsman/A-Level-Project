@@ -58,7 +58,8 @@
   <ItemGroup>
     <Compile Include="Assets/Scripts/DataManager.cs" />
     <Compile Include="Assets/Scripts/Setting.cs" />
-    <Compile Include="Assets/Scripts/LoadFiles.cs" />
+    <Compile Include="Assets/Scripts/SimulationDataManager.cs" />
+    <Compile Include="Assets/Scripts/FileUI.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets/TextMesh Pro/Shaders/TMPro.cginc" />
