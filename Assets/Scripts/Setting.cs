@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Setting : MonoBehaviour
 {
+    // Behaviour for one individual setting UI element
     public float value;
     public int min;
     public int max;
@@ -17,6 +18,7 @@ public class Setting : MonoBehaviour
 
     private void Awake()
     {
+        // Add this instances 'format settings' method to the commit event
         datamanager = FindObjectOfType<DataManager>();
         datamanager.commitEvent += FormatSettings;
     }
@@ -28,11 +30,13 @@ public class Setting : MonoBehaviour
     }
     private void Update()
     {
+        // Allows scrollbar to be interacted with
         value = sb.value * scale;
         valueText.text = value.ToString();
     }
     public void FormatSettings()
     {
+        // Activated when preferences are commited
         Preference preference = new Preference(this.name, value);
         datamanager.preferences.Add(preference);
     }

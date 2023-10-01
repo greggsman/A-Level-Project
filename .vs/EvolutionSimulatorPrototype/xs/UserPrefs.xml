@@ -4,21 +4,18 @@
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/SimulationDataManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/SimulationSystemManager.cs">
     <Files>
       <File FileName="Assets/Scripts/Setting.cs" Line="20" Column="55" />
-      <File FileName="Assets/Scripts/DataManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/FileUI.cs" Line="24" Column="1" />
-      <File FileName="Assets/Scripts/SimulationDataManager.cs" Line="11" Column="27" />
+      <File FileName="Assets/SimulationSystemManager.cs" Line="9" Column="6" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="EvolutionSimulatorPrototype" expanded="True">
             <Node name="Assets" expanded="True">
-              <Node name="Scripts" expanded="True">
-                <Node name="SimulationDataManager.cs" selected="True" />
-              </Node>
+              <Node name="Scripts" expanded="True" />
+              <Node name="SimulationSystemManager.cs" selected="True" />
             </Node>
           </Node>
         </State>

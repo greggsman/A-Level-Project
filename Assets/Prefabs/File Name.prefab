@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 804561351213570255}
   - component: {fileID: 2410169744116360735}
   - component: {fileID: 1045746269180349455}
+  - component: {fileID: 5086262735045325976}
   m_Layer: 5
   m_Name: File Name
   m_TagString: Untagged
@@ -81,6 +82,20 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: <File Name Goes Here>
+--- !u!114 &5086262735045325976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656790257717516509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627db99f4d2e9431cbec31d8c5422450, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  filePath: 
+  simulationManager: {fileID: 6318440390767828216, guid: 20eb4a1ed7df64e5397d079555125eaa, type: 3}
 --- !u!1 &5137833814567015818
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,19 +217,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2460001467273445428}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 701641936316469766, guid: ed91d0c10b2984f958547c8dd165b560, type: 3}
-        m_TargetAssemblyTypeName: DataManager, Assembly-CSharp
-        m_MethodName: runPreferences
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &7054219824956830758
 GameObject:
   m_ObjectHideFlags: 0
