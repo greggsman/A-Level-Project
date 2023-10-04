@@ -254,7 +254,7 @@ MonoBehaviour:
   value: 0
   min: 0
   max: 0
-  scale: 0
+  scale: 1
 --- !u!1 &7427418733178336581
 GameObject:
   m_ObjectHideFlags: 0

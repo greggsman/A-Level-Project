@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Setting : MonoBehaviour
 {
     // Behaviour for one individual setting UI element
-    public float value;
+    public int value;
     public int min;
     public int max;
 
@@ -31,7 +31,7 @@ public class Setting : MonoBehaviour
     private void Update()
     {
         // Allows scrollbar to be interacted with
-        value = sb.value * scale;
+        value = (int)(sb.value * scale);
         valueText.text = value.ToString();
     }
     public void FormatSettings()

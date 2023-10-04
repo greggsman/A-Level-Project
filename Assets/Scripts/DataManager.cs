@@ -11,7 +11,7 @@ public struct Preference
 {
     // Structure for a single preference
     public string description;
-    public float value;
+    public int value;
     public Preference (string description, float value)
     {
         this.description = description;
@@ -43,11 +43,12 @@ public class DataManager : MonoBehaviour
 
     public List<Preference> preferences = new List<Preference>();
     public GameObject fileUI;
+    public static SetOfPreferences preferencesToRun;
 
     private Transform lffh;
     private void Start()
     {
-        commitEvent += SerializeSettings; // commit event runs when a set of preferences are commited (line 84)
+        commitEvent += SerializeSettings; // commit event runs when a set of preferences are commited (line 99)
         commitEvent += GoToMainMenu;
 
         string folderName = Path.DirectorySeparatorChar + "Preferences_Data" + Path.DirectorySeparatorChar;
@@ -59,6 +60,7 @@ public class DataManager : MonoBehaviour
         lffh = GameObject.Find("LoadFileFromHere").transform;
 
         GoToMainMenu();
+        // /Users/alancgregg/Library/Application Support/DefaultCompany/EvolutionSimulatorPrototype/Preferences_Data/ is the persistent data path
     }
     private void SerializeSettings() // serializes user's preferences in JSON
     {

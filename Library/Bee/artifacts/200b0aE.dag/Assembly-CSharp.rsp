@@ -352,6 +352,7 @@
 "Assets/Scripts/FileUI.cs"
 "Assets/Scripts/Setting.cs"
 "Assets/Scripts/SimulationSystemManager.cs"
+"Assets/TerrainUnitData.cs"
 -langversion:9.0
 
 /deterministic
