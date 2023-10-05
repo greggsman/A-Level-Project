@@ -12,7 +12,7 @@ public struct Preference
     // Structure for a single preference
     public string description;
     public int value;
-    public Preference (string description, float value)
+    public Preference (string description, int value)
     {
         this.description = description;
         this.value = value;

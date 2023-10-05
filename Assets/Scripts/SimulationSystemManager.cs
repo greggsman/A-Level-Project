@@ -47,14 +47,8 @@ public class SimulationSystemManager : MonoBehaviour
                 Vector3 organismLocation = new Vector3Int((int)Random.Range(0f, terrainSize),
                     1, (int) Random.Range(0f, terrainSize));
                 GameObject currentTerrainUnit = terrainUnits[(int) organismLocation.x, (int) organismLocation.z];
-                if (currentTerrainUnit.GetComponent<TerrainUnitData>().consumerSpawn)
-                {
-                    continue;
-                }
-                else
-                {
-                    Instantiate(consumer, organismLocation, new Quaternion(0f, 0f, 0f, 0f));
-                }
+                if (currentTerrainUnit.GetComponent<TerrainUnitData>().consumerSpawn) { continue; }
+                else { Instantiate(consumer, organismLocation, new Quaternion(0f, 0f, 0f, 0f)); }
             }
         }
     }
