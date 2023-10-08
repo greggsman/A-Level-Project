@@ -1,10 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
 using System;
-using UnityEngine.SceneManagement;
 
 [Serializable]
 public struct Preference
@@ -69,7 +67,8 @@ public class DataManager : MonoBehaviour
         string currentFilePath = folderPath + json_preferences.file_ID;
         string json = JsonUtility.ToJson(json_preferences, true);
         FileStream fs = File.Create(currentFilePath);
-        using (StreamWriter sw = new StreamWriter(fs)) { sw.WriteLine(json); } 
+        using (StreamWriter sw = new StreamWriter(fs)) { sw.WriteLine(json); }
+        fs.Close();
     }
 
     private const int diffBetweenFileUIs = 60; // How far apart the options to access a new file should be spread out on the main menu

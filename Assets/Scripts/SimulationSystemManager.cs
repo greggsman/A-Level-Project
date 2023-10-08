@@ -7,48 +7,62 @@ public class SimulationSystemManager : MonoBehaviour
     public SetOfPreferences jsonPrefences;
     public GameObject terrainUnit;
     public GameObject consumer;
+    public GameObject producer;
 
-    private Dictionary<string, int> simulationSettings = new Dictionary<string, int>();
+    private Dictionary<string, int> simulationSettings;
 
     //keys
     private string consumerPop = "Initial Consumer Population";
     private string prodPop = "Initial Producer Population";
 
+    private TerrainUnitData[,] terrainUnits;
+
     private void Start()
     {
+        simulationSettings = new Dictionary<string, int>();
         jsonPrefences = DataManager.preferencesToRun;
         foreach (Preference preference in jsonPrefences.preferences)
         {
             simulationSettings.Add(preference.description, preference.value);
-            Debug.Log(preference.description + ":" + preference.value);
         }
-        GenerateSimulation();
+        SimulationGenerationInstructions();
     }
 
-    private void GenerateSimulation()
+    private void SimulationGenerationInstructions()
     {
         // possible opportunity for recursion here
         int terrainSize = simulationSettings["Terrain Size"];
-        GameObject[,] terrainUnits = new GameObject[terrainSize, terrainSize];
-        for (int i = 0; i < terrainSize; i++)
+        terrainUnits = new TerrainUnitData[terrainSize, terrainSize];
+
+        for (int i = 0; i < terrainSize; i++) // generates the a square grid for the terrain and stores it in a 2D array
         {
             for (int j = 0; j < terrainSize; j++)
             {
-                Vector3 newPosition = new Vector3(i, 0f, j);
-                Debug.LogFormat("{0} {1} {2}", newPosition.x, newPosition.y, newPosition.z);
-                Instantiate(terrainUnit, newPosition, new Quaternion(0f, 0f, 0f, 0f));
+                Vector3 newPosition = new Vector3(i, 0f, j); // position of a new terrain unit to be generated
+                terrainUnits[i,j] = Instantiate(terrainUnit, Vector3.Scale(newPosition, terrainUnit.transform.localScale),
+                    terrainUnit.transform.localRotation).GetComponent<TerrainUnitData>();
+                // new position multiplied by the scale of a terrain unit (set by me)
             }
         }
-        for(int i = 0; i < simulationSettings[consumerPop]; i++)
+        Spawn(terrainSize, consumerPop, consumer); // avoids code repetition
+        Spawn(terrainSize, prodPop, producer);
+    }
+    private void Spawn(int terrainSize, string entity_count, GameObject entity)
+    {
+        for (int i = 0; i < simulationSettings[entity_count]; i++)
         {
             bool placeNotFound = true;
             while (placeNotFound)
             {
                 Vector3 organismLocation = new Vector3Int((int)Random.Range(0f, terrainSize),
-                    1, (int) Random.Range(0f, terrainSize));
-                GameObject currentTerrainUnit = terrainUnits[(int) organismLocation.x, (int) organismLocation.z];
-                if (currentTerrainUnit.GetComponent<TerrainUnitData>().consumerSpawn) { continue; }
-                else { Instantiate(consumer, organismLocation, new Quaternion(0f, 0f, 0f, 0f)); }
+                    1, (int)Random.Range(0f, terrainSize));
+                TerrainUnitData currentTerrainUnit = terrainUnits[(int)organismLocation.x, (int)organismLocation.z];
+                if (currentTerrainUnit.consumerSpawn || currentTerrainUnit.producerSpawn) { continue; }
+                else
+                {
+                    Instantiate(entity, organismLocation, entity.transform.localRotation);
+                    placeNotFound = false;
+                }
             }
         }
     }

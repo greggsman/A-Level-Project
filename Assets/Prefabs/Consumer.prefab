@@ -402,7 +402,6 @@ GameObject:
   - component: {fileID: 6301132899014467315}
   - component: {fileID: 4858235497011065355}
   - component: {fileID: 994117223093250132}
-  - component: {fileID: -2302287020397774150}
   - component: {fileID: 3983608317788203892}
   m_Layer: 0
   m_Name: Consumer
@@ -493,18 +492,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-2302287020397774150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8205465532450879462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4ee3b99ac334d04a0163d65c7ae2b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!54 &3983608317788203892
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -519,7 +506,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 64
   m_CollisionDetection: 0
 --- !u!1 &8628446311493962530
 GameObject:

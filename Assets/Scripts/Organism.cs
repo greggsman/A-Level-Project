@@ -36,5 +36,5 @@ public class ConsumerData : Organism
 }
 public class Producer : Organism
 {
-    
+    // prod1, prod2 or prod3
 }
