@@ -1,12 +1,16 @@
 ﻿<Properties StartupConfiguration="{403FC2B9-A586-FC53-AB01-BC31321D038B}|">
-  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="d1679191-d40f-4b00-8027-a6e77bdf41d7" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/SimulationSystemManager.cs">
     <Files>
-      <File FileName="Assets/Scripts/FileUI.cs" Line="5" Column="1" />
-      <File FileName="Assets/Scripts/DataManager.cs" Line="61" Column="1" />
-      <File FileName="Assets/Scripts/Setting.cs" Line="39" Column="26" />
-      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="66" Column="2" />
-      <File FileName="Assets/Scripts/Organism.cs" Line="39" Column="29" />
+      <File FileName="Assets/Scripts/FileUI.cs" Line="26" Column="6" />
+      <File FileName="Assets/Scripts/DataManager.cs" Line="100" Column="2" />
+      <File FileName="Assets/Scripts/Setting.cs" Line="12" Column="1" />
+      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="47" Column="42" />
+      <File FileName="Assets/Scripts/Organism.cs" Line="10" Column="39" />
       <File FileName="Assets/Scripts/TerrainUnitData.cs" Line="3" Column="9" />
     </Files>
     <Pads>
@@ -31,10 +35,6 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="f6808afd-82cc-4c9d-8bbe-c9bdf7c7752a" />
+  <MultiItemStartupConfigurations />
 </Properties>
