@@ -16,6 +16,7 @@ public class SimulationSystemManager : MonoBehaviour
     private string prodPop = "Initial Producer Population";
 
     private TerrainUnitData[,] terrainUnits;
+    private Vector3 terrainScale;
 
     private void Start()
     {
@@ -25,6 +26,7 @@ public class SimulationSystemManager : MonoBehaviour
         {
             simulationSettings.Add(preference.description, preference.value);
         }
+        terrainScale = terrainUnit.transform.localScale;
         SimulationGenerationInstructions();
     }
 
@@ -39,7 +41,7 @@ public class SimulationSystemManager : MonoBehaviour
             for (int j = 0; j < terrainSize; j++)
             {
                 Vector3 newPosition = new Vector3(i, 0f, j); // position of a new terrain unit to be generated
-                terrainUnits[i,j] = Instantiate(terrainUnit, Vector3.Scale(newPosition, terrainUnit.transform.localScale),
+                terrainUnits[i,j] = Instantiate(terrainUnit, Vector3.Scale(newPosition, terrainScale),
                     terrainUnit.transform.localRotation).GetComponent<TerrainUnitData>();
                 // new position multiplied by the scale of a terrain unit (set by me)
             }
@@ -60,7 +62,8 @@ public class SimulationSystemManager : MonoBehaviour
                 if (currentTerrainUnit.consumerSpawn || currentTerrainUnit.producerSpawn) { continue; }
                 else
                 {
-                    Instantiate(entity, organismLocation, entity.transform.localRotation);
+                    Instantiate(entity, Vector3.Scale(organismLocation, terrainScale), entity.transform.localRotation);
+                    // terrainScale needs to be
                     placeNotFound = false;
                 }
             }
