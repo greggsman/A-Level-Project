@@ -34,7 +34,7 @@ public class ConsumerData : Organism
         string ID = "Con."+_strength_speed_scale+"|"+_stealth_perceptivenesss_scale;
     }
 }
-public class Producer : Organism
+public class ProducerData : Organism
 {
     // prod1, prod2 or prod3
 }

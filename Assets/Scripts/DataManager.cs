@@ -31,6 +31,9 @@ public class SetOfPreferences
 }
 public class DataManager : MonoBehaviour
 {
+    public const int MaximumNoOfFiles = 6;
+    private const int diffBetweenFileUIs = 60; // How far apart the options to access a new file should be spread out on the main menu
+
     public delegate void CommitPreferences();
     public event CommitPreferences commitEvent;
     // this event runs when the 'Commit Preferences' button is pressed
@@ -43,11 +46,11 @@ public class DataManager : MonoBehaviour
     public GameObject fileUI;
     public static SetOfPreferences preferencesToRun;
 
-    private Transform lffh;
+    private Transform loadFilesFromHere;
+    private GameObject tooManyFilesWarning;
     private void Start()
     {
         commitEvent += SerializeSettings; // commit event runs when a set of preferences are commited (line 99)
-        commitEvent += GoToMainMenu;
 
         string folderName = Path.DirectorySeparatorChar + "Preferences_Data" + Path.DirectorySeparatorChar;
         folderPath = Application.persistentDataPath + folderName; 
@@ -55,25 +58,36 @@ public class DataManager : MonoBehaviour
 
         preferencesSettings = GameObject.Find("Preferences_Settings");
         mainMenu = GameObject.Find("Main_Menu");
-        lffh = GameObject.Find("LoadFileFromHere").transform;
+        loadFilesFromHere = GameObject.Find("LoadFileFromHere").transform;
+
+        tooManyFilesWarning = GameObject.Find("too many files");
+        tooManyFilesWarning.GetComponent<Text>().text += MaximumNoOfFiles + "!";
+        tooManyFilesWarning.SetActive(false);
 
         GoToMainMenu();
         // /Users/alancgregg/Library/Application Support/DefaultCompany/EvolutionSimulatorPrototype/Preferences_Data/ is the persistent data path
     }
-    private void SerializeSettings() // serializes user's preferences in JSON
+    private void SerializeSettings() // serializes user's preferences in JSON, run when Commit Prefences is pressed
     {
-        SetOfPreferences json_preferences = new SetOfPreferences();
-        json_preferences.preferences = preferences;
-        string currentFilePath = folderPath + json_preferences.file_ID;
-        string json = JsonUtility.ToJson(json_preferences, true);
-        FileStream fs = File.Create(currentFilePath);
-        using (StreamWriter sw = new StreamWriter(fs)) { sw.WriteLine(json); }
-        fs.Close();
+        if(Directory.GetFiles(folderPath).Length >= MaximumNoOfFiles) // using >= because INDEXING STARTS AT 0!!!!
+        {
+            tooManyFilesWarning.SetActive(true);
+            Debug.Log("TOO MANY FILES");
+        }
+        else // add a new JSON file
+        {
+            SetOfPreferences json_preferences = new SetOfPreferences();
+            json_preferences.preferences = preferences;
+            string currentFilePath = folderPath + json_preferences.file_ID;
+            string json = JsonUtility.ToJson(json_preferences, true);
+            FileStream fs = File.Create(currentFilePath);
+            using (StreamWriter sw = new StreamWriter(fs)) { sw.WriteLine(json); }
+            fs.Close();
+            GoToMainMenu();
+        }        
     }
 
-    private const int diffBetweenFileUIs = 60; // How far apart the options to access a new file should be spread out on the main menu
-
-    public void GoToMainMenu()
+    public void GoToMainMenu() // called when 'cancel' is pressed
     // Loads the Main Menu scene and loads an option to select each file in the save data folder
     {
         preferencesSettings.SetActive(false);
@@ -83,8 +97,8 @@ public class DataManager : MonoBehaviour
         string[] files = Directory.GetFiles(folderPath);
         for (int i = 0; i < files.Length; i++)
         {
-            GameObject currentFileUI = Instantiate(fileUI, lffh.position + Vector3.down * (i + 1) * diffBetweenFileUIs,
-                new Quaternion(0f, 0f, 0f, 0f), lffh);
+            GameObject currentFileUI = Instantiate(fileUI, loadFilesFromHere.position + Vector3.down * (i + 1) * diffBetweenFileUIs,
+                new Quaternion(0f, 0f, 0f, 0f), loadFilesFromHere);
             currentFileUI.GetComponent<FileUI>().filePath = files[i]; // assigns the filePath for each option in the main menu
             currentFileUI.GetComponent<Text>().text = files[i].Substring(folderPath.Length); // displays the name of the file in the main menu
         }
@@ -92,9 +106,10 @@ public class DataManager : MonoBehaviour
     public void GoToNewPreferenceMenu()
     // Loads the menu 
     {
+        tooManyFilesWarning.SetActive(false);
         mainMenu.SetActive(false);
         preferencesSettings.SetActive(true);
-        for(int i = 0; i < lffh.childCount; i++) { Destroy(lffh.GetChild(i).gameObject); } // Destroy all file UI elements
+        for(int i = 0; i < loadFilesFromHere.childCount; i++) { Destroy(loadFilesFromHere.GetChild(i).gameObject); } // Destroy all file UI elements
     }
     public void button() { commitEvent(); }
 }
