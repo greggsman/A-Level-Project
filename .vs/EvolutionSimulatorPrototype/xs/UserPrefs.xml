@@ -1,19 +1,14 @@
 ﻿<Properties StartupConfiguration="{403FC2B9-A586-FC53-AB01-BC31321D038B}|">
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="eaf52cc9-2fc0-45cd-82b2-f3b527a94b3c" />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/CameraMovement.cs">
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="3b26208a-d9eb-441c-b274-a367b7be52aa" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Organism.cs">
     <Files>
-      <File FileName="Assets/Scripts/FileUI.cs" Line="26" Column="6" />
+      <File FileName="Assets/Scripts/FileUI.cs" Line="11" Column="6" />
       <File FileName="Assets/Scripts/DataManager.cs" Line="100" Column="2" />
       <File FileName="Assets/Scripts/Setting.cs" Line="12" Column="1" />
-      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="67" Column="10" />
-      <File FileName="Assets/Scripts/Organism.cs" Line="40" Column="2" />
+      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="24" Column="49" />
+      <File FileName="Assets/Scripts/Organism.cs" Line="1" Column="10" />
       <File FileName="Assets/Scripts/TerrainUnitData.cs" Line="3" Column="9" />
-      <File FileName="Assets/CameraMovement.cs" Line="22" Column="56" />
+      <File FileName="Assets/Scripts/CameraMovement.cs" Line="5" Column="21" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -21,7 +16,7 @@
           <Node name="EvolutionSimulatorPrototype" expanded="True">
             <Node name="Assets" expanded="True">
               <Node name="Scripts" expanded="True">
-                <Node name="CameraMovement.cs" selected="True" />
+                <Node name="Organism.cs" selected="True" />
               </Node>
             </Node>
           </Node>
@@ -37,5 +32,10 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
 </Properties>

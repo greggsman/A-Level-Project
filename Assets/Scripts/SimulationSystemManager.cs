@@ -63,7 +63,7 @@ public class SimulationSystemManager : MonoBehaviour
                 else
                 {
                     Instantiate(entity, Vector3.Scale(organismLocation, terrainScale), entity.transform.localRotation);
-                    // terrainScale needs to be
+                    // position of organism needs to be scaled by terrain scale to make sure it doesn't spawn in one corner of the terrain
                     placeNotFound = false;
                 }
             }
