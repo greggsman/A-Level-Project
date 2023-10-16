@@ -1,14 +1,13 @@
 ﻿<Properties StartupConfiguration="{403FC2B9-A586-FC53-AB01-BC31321D038B}|">
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="3b26208a-d9eb-441c-b274-a367b7be52aa" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Setting.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/DataManager.cs">
     <Files>
-      <File FileName="Assets/Scripts/FileUI.cs" Line="11" Column="6" />
-      <File FileName="Assets/Scripts/DataManager.cs" Line="100" Column="2" />
-      <File FileName="Assets/Scripts/Setting.cs" Line="12" Column="1" />
-      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="24" Column="49" />
-      <File FileName="Assets/Scripts/Organism.cs" Line="1" Column="10" />
       <File FileName="Assets/Scripts/TerrainUnitData.cs" Line="3" Column="9" />
-      <File FileName="Assets/Scripts/CameraMovement.cs" Line="5" Column="21" />
+      <File FileName="Assets/Scripts/CameraMovement.cs" Line="16" Column="28" />
+      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="30" Column="25" />
+      <File FileName="Assets/Scripts/DataManager.cs" Line="88" Column="35" />
+      <File FileName="Assets/Scripts/ConsumerBehaviour.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Setting.cs" Line="34" Column="60" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -16,7 +15,7 @@
           <Node name="EvolutionSimulatorPrototype" expanded="True">
             <Node name="Assets" expanded="True">
               <Node name="Scripts" expanded="True">
-                <Node name="Setting.cs" selected="True" />
+                <Node name="DataManager.cs" selected="True" />
               </Node>
             </Node>
           </Node>
