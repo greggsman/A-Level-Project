@@ -1,20 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Setting : MonoBehaviour
 {
     // Behaviour for one individual setting UI element
-    public int value;
-    public int min;
-    public int max;
+    private int value; // default value is 0
 
-    private Scrollbar sb;
+    public Slider slider;
     private Text valueText;
     private DataManager datamanager;
-
-    public float scale;
 
     private void Awake()
     {
@@ -24,14 +18,12 @@ public class Setting : MonoBehaviour
     }
     private void Start()
     {
-        value = 0;
-        valueText = transform.GetChild(1).GetComponent<Text>();
-        sb = GetComponentInChildren<Scrollbar>();
+        valueText = transform.GetChild(0).GetComponent<Text>();
+        slider.value = 0;
     }
     private void Update()
     {
-        // Allows scrollbar to be interacted with
-        value = (int)(sb.value * scale);
+        value = (int)slider.value;
         valueText.text = value.ToString();
     }
     public void FormatSettings()

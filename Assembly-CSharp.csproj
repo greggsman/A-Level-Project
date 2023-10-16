@@ -62,7 +62,9 @@
     <Compile Include="Assets/Scripts/FileUI.cs" />
     <Compile Include="Assets/Scripts/CameraMovement.cs" />
     <Compile Include="Assets/Scripts/SimulationSystemManager.cs" />
+    <Compile Include="Assets/ConsumerBehvaiour.cs" />
     <Compile Include="Assets/Scripts/TerrainUnitData.cs" />
+    <Compile Include="Assets/Scripts/ConsumerBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets/TextMesh Pro/Shaders/TMPro.cginc" />
