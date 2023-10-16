@@ -123,111 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &310644273
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5196644690446365064, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5686890196474166472, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787558, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_Name
-      value: Preference
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 35
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -491.02133
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 387.4228
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 77.31964
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7427418733085787559, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: bdefe18ea7ca041c0ac865d153645db9, type: 3}
 --- !u!1 &345258851
 GameObject:
   m_ObjectHideFlags: 0
@@ -1049,7 +944,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &825834287 stripped
 MonoBehaviour:
@@ -1275,7 +1170,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1219157984}
   m_Layer: 5
-  m_Name: LoadPreferences
+  m_Name: Load Preferences From Here
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1397,7 +1292,7 @@ RectTransform:
   - {fileID: 2004608033}
   - {fileID: 1144800708}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1538,7 +1433,7 @@ GameObject:
   - component: {fileID: 2122890692}
   - component: {fileID: 2122890691}
   m_Layer: 5
-  m_Name: Commit Preferences
+  m_Name: Commit Preferences Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1676,7 +1571,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 701641936316469785, guid: ed91d0c10b2984f958547c8dd165b560, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 701641936316469785, guid: ed91d0c10b2984f958547c8dd165b560, type: 3}
       propertyPath: m_LocalPosition.x
