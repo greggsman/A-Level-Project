@@ -31,5 +31,7 @@ public class Setting : MonoBehaviour
         // Activated when preferences are commited
         Preference preference = new Preference(this.name, value);
         datamanager.preferences.Add(preference);
+        Debug.Log("Calling for " + preference.description);
+        Debug.Log(datamanager.preferences.Count);
     }
 }

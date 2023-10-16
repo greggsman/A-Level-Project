@@ -29,6 +29,7 @@ public class SetOfPreferences
         file_ID = "File created " + now.ToLongDateString() + " " + now.ToLongTimeString();
     }
 }
+
 public class DataManager : MonoBehaviour
 {
     public const int MaximumNoOfFiles = 6;
@@ -49,8 +50,9 @@ public class DataManager : MonoBehaviour
     public static SetOfPreferences preferencesToRun;
 
     private Transform loadFilesFromHere;
-    private Transform loadPrefencesFromHere;
+    private Transform loadPreferencesFromHere;
     private GameObject tooManyFilesWarning;
+
     private void Start()
     {
         commitEvent += SerializeSettings; // commit event runs when a set of preferences are commited (line 99)
@@ -62,7 +64,7 @@ public class DataManager : MonoBehaviour
         preferencesSettings = GameObject.Find("Preferences_Settings");
         mainMenu = GameObject.Find("Main_Menu");
         loadFilesFromHere = GameObject.Find("LoadFileFromHere").transform;
-        loadPrefencesFromHere = GameObject.Find("Load Preferences From Here").transform;
+        loadPreferencesFromHere = GameObject.Find("Load Preferences From Here").transform;
 
         tooManyFilesWarning = GameObject.Find("too many files");
         tooManyFilesWarning.GetComponent<Text>().text += MaximumNoOfFiles + "!";
@@ -71,6 +73,7 @@ public class DataManager : MonoBehaviour
         GoToMainMenu();
         // /Users/alancgregg/Library/Application Support/DefaultCompany/EvolutionSimulatorPrototype/Preferences_Data/ is the persistent data path
     }
+
     private void SerializeSettings() // serializes user's preferences in JSON, run when Commit Prefences is pressed
     {
         if(Directory.GetFiles(folderPath).Length >= MaximumNoOfFiles) // using >= because INDEXING STARTS AT 0!!!!
@@ -83,9 +86,14 @@ public class DataManager : MonoBehaviour
             json_preferences.preferences = preferences;
             string currentFilePath = folderPath + json_preferences.file_ID;
             string json = JsonUtility.ToJson(json_preferences, true);
+
             FileStream fs = File.Create(currentFilePath);
             using (StreamWriter sw = new StreamWriter(fs)) { sw.WriteLine(json); }
             fs.Close();
+            for (int i = 0; i < loadPreferencesFromHere.childCount; i++) // Destroy all inital attribute preference UI elements
+            {
+                Destroy(loadPreferencesFromHere.GetChild(i).gameObject);
+            } 
             GoToMainMenu();
         }        
     }
@@ -105,11 +113,9 @@ public class DataManager : MonoBehaviour
             currentFileUI.GetComponent<FileUI>().filePath = files[i]; // assigns the filePath for each option in the main menu
             currentFileUI.GetComponent<Text>().text = files[i].Substring(folderPath.Length); // displays the name of the file in the main menu
         }
-        for (int i = 0; i < loadFilesFromHere.childCount; i++)
-        {
-            Destroy(loadPrefencesFromHere.GetChild(i).gameObject);
-        } // Destroy all inital attribute preference UI elements
+        
     }
+
     public void GoToNewPreferenceMenu()
     // Loads the menu to create a new preference
     {
@@ -117,15 +123,15 @@ public class DataManager : MonoBehaviour
         mainMenu.SetActive(false);
         preferencesSettings.SetActive(true);
 
-        for (int i = 0; i < loadFilesFromHere.childCount; i++)
+        for (int i = 0; i < loadFilesFromHere.childCount; i++) // Destroy all file UI elements
         {
             Destroy(loadFilesFromHere.GetChild(i).gameObject);
-        } // Destroy all file UI elements
+        } 
 
         for (int i = 0; i < ConsumerData.attributeKeys.Length; i++)
         {
-            GameObject currentPreference = Instantiate(initialAttributePreference, loadPrefencesFromHere.position + Vector3.down * (i + 1) * diffBetweenPreferences,
-                initialAttributePreference.transform.rotation, loadPrefencesFromHere);
+            GameObject currentPreference = Instantiate(initialAttributePreference, loadPreferencesFromHere.position + Vector3.down * (i + 1) * diffBetweenPreferences,
+                initialAttributePreference.transform.rotation, loadPreferencesFromHere);
             string attributeName = ConsumerData.attributeKeys[i]; ;
             currentPreference.GetComponent<Text>().text = attributeName;
             currentPreference.name = attributeName;
@@ -135,5 +141,6 @@ public class DataManager : MonoBehaviour
             setting.slider.maxValue = 100;
         }
     }
+
     public void button() { commitEvent(); }
 }
