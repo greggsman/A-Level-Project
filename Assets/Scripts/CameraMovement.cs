@@ -18,8 +18,8 @@ public class CameraMovement : MonoBehaviour
         float yRotation = 0;
         float xRotation = 0;
 
-        if (Input.GetKey(KeyCode.UpArrow)) { yRotation = rotationSpeed; }
-        if (Input.GetKey(KeyCode.DownArrow)) { yRotation = -rotationSpeed; }
+        if (Input.GetKey(KeyCode.DownArrow)) { yRotation = rotationSpeed; }
+        if (Input.GetKey(KeyCode.UpArrow)) { yRotation = -rotationSpeed; }
         if (Input.GetKey(KeyCode.RightArrow)) { xRotation = rotationSpeed; }
         if (Input.GetKey(KeyCode.LeftArrow)) { xRotation = -rotationSpeed; }
 
