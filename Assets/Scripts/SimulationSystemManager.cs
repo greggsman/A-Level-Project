@@ -10,13 +10,9 @@ public class SimulationSystemManager : MonoBehaviour
     public GameObject producer;
 
     private Dictionary<string, int> simulationSettings;
-
-    //keys
-    private string consumerPop = "Initial Consumer Population";
-    private string prodPop = "Initial Producer Population";
-
     private TerrainUnitData[,] terrainUnits;
     private Vector3 terrainScale;
+    private int terrainSize;
 
     private void Start()
     {
@@ -26,6 +22,16 @@ public class SimulationSystemManager : MonoBehaviour
         {
             simulationSettings.Add(preference.description, preference.value);
         }
+        /*
+        foreach(string attributeKey in ConsumerData.attributeKeys)
+        {
+            initialConsumerData.attributes[attributeKey] = simulationSettings[attributeKey];
+        }
+        foreach(KeyValuePair<string, int> kvp in initialConsumerData.attributes)
+        {
+            Debug.Log(kvp.Key + ":" + kvp.Value);
+        }
+        */
         terrainScale = terrainUnit.transform.localScale;
         SimulationGenerationInstructions();
     }
@@ -33,7 +39,7 @@ public class SimulationSystemManager : MonoBehaviour
     private void SimulationGenerationInstructions()
     {
         // possible opportunity for recursion here
-        int terrainSize = simulationSettings["Terrain Size"];
+        terrainSize = simulationSettings["Terrain Size"];
         terrainUnits = new TerrainUnitData[terrainSize, terrainSize];
 
         for (int i = 0; i < terrainSize; i++) // generates the a square grid for the terrain and stores it in a 2D array
@@ -46,10 +52,10 @@ public class SimulationSystemManager : MonoBehaviour
                 // new position multiplied by the scale of a terrain unit (set by me)
             }
         }
-        Spawn(terrainSize, consumerPop, consumer); // avoids code repetition
-        Spawn(terrainSize, prodPop, producer);
+        Spawn("Initial Consumer Population", consumer); // avoids code repetition
+        Spawn("Initial Producer Population", producer);
     }
-    private void Spawn(int terrainSize, string entity_count, GameObject entity)
+    private void Spawn(string entity_count, GameObject entity) // spawning for first generation organisms
     {
         for (int i = 0; i < simulationSettings[entity_count]; i++)
         {
@@ -62,11 +68,21 @@ public class SimulationSystemManager : MonoBehaviour
                 if (currentTerrainUnit.consumerSpawn || currentTerrainUnit.producerSpawn) { continue; }
                 else
                 {
-                    Instantiate(entity, Vector3.Scale(organismLocation, terrainScale), entity.transform.localRotation);
+                    Instantiate(entity, Vector3.Scale(organismLocation, terrainScale), entity.transform.localRotation); //loads entity into scene
+                    if(entity_count == "Initial Consumer Population")
+                    {
+                        Debug.Log("setting values");
+                        Dictionary<string, int> consumerAttributes = entity.GetComponent<ConsumerBehaviour>().stats.attributes;
+                        foreach(string attributeKey in ConsumerData.attributeKeys)
+                        {
+                            consumerAttributes[attributeKey] = simulationSettings[attributeKey];
+                            Debug.Log(consumerAttributes[attributeKey]);
+                        }
+                    }
                     // position of organism needs to be scaled by terrain scale to make sure it doesn't spawn in one corner of the terrain
                     placeNotFound = false;
                 }
             }
-        }
+        }  
     }
 }

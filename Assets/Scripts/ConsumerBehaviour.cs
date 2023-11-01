@@ -1,12 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
-using System;
 using UnityEngine;
 
 public class ConsumerBehaviour : MonoBehaviour
 {
-    ConsumerData stats; // stats will be providec when organism is born
-    // move
-    // eat
-    // reproduce
+    public ConsumerData stats = new ConsumerData(); // stats will be provided when organism is born
+    // object created
+    private void Start()
+    {
+        Debug.Log("object created");
+        foreach (string attributeKey in ConsumerData.attributeKeys)
+        {
+            Debug.Log(stats.attributes[attributeKey]);
+        }
+        
+    }
+    private void Update()
+    {
+
+    }
 }

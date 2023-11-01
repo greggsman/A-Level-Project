@@ -40,7 +40,7 @@ public class DataManager : MonoBehaviour
     public event CommitPreferences commitEvent;
     // this event runs when the 'Commit Preferences' button is pressed
 
-    private string folderPath; // path for folder where all the 
+    private string folderPath; // path for folder where all the preferences will be stored
     private GameObject preferencesSettings; // Parent for the UI for the preferences menu
     private GameObject mainMenu; // Parent for the UI for the main menu
 
@@ -55,8 +55,6 @@ public class DataManager : MonoBehaviour
 
     private void Start()
     {
-        commitEvent += SerializeSettings; // commit event runs when a set of preferences are commited (line 99)
-
         string folderName = Path.DirectorySeparatorChar + "Preferences_Data" + Path.DirectorySeparatorChar;
         folderPath = Application.persistentDataPath + folderName; 
         if (!Directory.Exists(folderPath)) { Directory.CreateDirectory(folderPath); } // If "Preferences_Data" doesn't exist already, create it
@@ -95,7 +93,7 @@ public class DataManager : MonoBehaviour
                 Destroy(loadPreferencesFromHere.GetChild(i).gameObject);
             } 
             GoToMainMenu();
-        }        
+        }
     }
 
     public void GoToMainMenu() // called when 'cancel' is pressed
@@ -112,8 +110,7 @@ public class DataManager : MonoBehaviour
                 fileUI.transform.rotation, loadFilesFromHere);
             currentFileUI.GetComponent<FileUI>().filePath = files[i]; // assigns the filePath for each option in the main menu
             currentFileUI.GetComponent<Text>().text = files[i].Substring(folderPath.Length); // displays the name of the file in the main menu
-        }
-        
+        }        
     }
 
     public void GoToNewPreferenceMenu()
@@ -142,5 +139,9 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    public void button() { commitEvent(); }
+    public void button()
+    {
+        commitEvent();
+        SerializeSettings();
+    }
 }

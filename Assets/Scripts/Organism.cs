@@ -10,7 +10,8 @@ public class ConsumerData : Organism
 {
     // attributes
     public static string[] attributeKeys = new string[] { "Strength/Speed", "Stealth/Perceptiveness", "Maximum Consumption Rate" };
-    private Dictionary<string, int> attributes = new Dictionary<string, int>();
+    // this dict is public because I need to access it in Simulation System Manager in Start(), but it kind of defeats the point of abstraction??
+    public Dictionary<string, int> attributes = new Dictionary<string, int>();
 
     public string ID;
     public float Energy
@@ -18,6 +19,7 @@ public class ConsumerData : Organism
         get { return energy; }
         set { energy = value; }
     }
+    // should i use negatives or reciprocals for the sclae
     public int StrengthSpeedScale
     {
         get { return attributes["Strength/Speed"]; }
@@ -32,8 +34,7 @@ public class ConsumerData : Organism
     {
         get { return attributes["Maximum Consumption Rate"]; }
         set { attributes["Maximum Consumption Rate"] = value; }
-    }
-
+    } 
     public ConsumerData()
     {
         for(int i = 0; i < attributeKeys.Length; i++)
@@ -42,7 +43,8 @@ public class ConsumerData : Organism
         }
     }
 }
+public enum ProducerType { One, Two, Three }
 public class ProducerData : Organism
 {
-    // prod1, prod2 or prod3
+    public ProducerType type;
 }

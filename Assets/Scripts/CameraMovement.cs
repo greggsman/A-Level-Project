@@ -26,3 +26,4 @@ public class CameraMovement : MonoBehaviour
         transform.localEulerAngles += new Vector3(Mathf.Clamp(yRotation, -90, 90), xRotation, 0f) * Time.deltaTime;
     }
 }
+    
