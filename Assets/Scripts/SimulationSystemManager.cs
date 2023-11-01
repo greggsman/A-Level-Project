@@ -9,7 +9,7 @@ public class SimulationSystemManager : MonoBehaviour
     public GameObject consumer;
     public GameObject producer;
 
-    private Dictionary<string, int> simulationSettings;
+    public Dictionary<string, int> simulationSettings;
     private TerrainUnitData[,] terrainUnits;
     private Vector3 terrainScale;
     private int terrainSize;
@@ -69,16 +69,6 @@ public class SimulationSystemManager : MonoBehaviour
                 else
                 {
                     Instantiate(entity, Vector3.Scale(organismLocation, terrainScale), entity.transform.localRotation); //loads entity into scene
-                    if(entity_count == "Initial Consumer Population")
-                    {
-                        Debug.Log("setting values");
-                        Dictionary<string, int> consumerAttributes = entity.GetComponent<ConsumerBehaviour>().stats.attributes;
-                        foreach(string attributeKey in ConsumerData.attributeKeys)
-                        {
-                            consumerAttributes[attributeKey] = simulationSettings[attributeKey];
-                            Debug.Log(consumerAttributes[attributeKey]);
-                        }
-                    }
                     // position of organism needs to be scaled by terrain scale to make sure it doesn't spawn in one corner of the terrain
                     placeNotFound = false;
                 }
