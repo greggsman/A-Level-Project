@@ -8,8 +8,8 @@ public class SimulationSystemManager : MonoBehaviour
     public GameObject terrainUnit;
     public GameObject consumer;
     public GameObject producer;
-
     public Dictionary<string, int> simulationSettings;
+
     private TerrainUnitData[,] terrainUnits;
     private Vector3 terrainScale;
     private int terrainSize;
@@ -22,16 +22,6 @@ public class SimulationSystemManager : MonoBehaviour
         {
             simulationSettings.Add(preference.description, preference.value);
         }
-        /*
-        foreach(string attributeKey in ConsumerData.attributeKeys)
-        {
-            initialConsumerData.attributes[attributeKey] = simulationSettings[attributeKey];
-        }
-        foreach(KeyValuePair<string, int> kvp in initialConsumerData.attributes)
-        {
-            Debug.Log(kvp.Key + ":" + kvp.Value);
-        }
-        */
         terrainScale = terrainUnit.transform.localScale;
         SimulationGenerationInstructions();
     }

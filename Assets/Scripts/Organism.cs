@@ -8,6 +8,7 @@ public abstract class Organism
 }
 public class ConsumerData : Organism
 {
+    private const int defaultValue = 100;
     // attributes
     public static string[] attributeKeys = new string[] { "Strength/Speed", "Stealth/Perceptiveness", "Maximum Consumption Rate" };
     // this dict is public because I need to access it in Simulation System Manager in Start(), but it kind of defeats the point of abstraction??
@@ -19,15 +20,25 @@ public class ConsumerData : Organism
         get { return energy; }
         set { energy = value; }
     }
-    // should i use negatives or reciprocals for the sclae
-    public int StrengthSpeedScale
+    // default value + scale value
+    public int Strength
     {
-        get { return attributes["Strength/Speed"]; }
+        get { return defaultValue + attributes["Strength/Speed"]; }
         set { attributes["Strength/Speed"] = value; }
     }
-    public int StealthPerceptivenessScale
+    public int Speed
     {
-        get { return attributes["Stealth/Perceptiveness"]; }
+        get { return defaultValue - attributes["Strength/Speed"]; }
+        set { attributes["Strength/Speed"] = value; }
+    }
+    public int Stealth
+    {
+        get { return defaultValue + attributes["Stealth/Perceptiveness"]; }
+        set { attributes["Stealth/Perceptiveness"] = value; }
+    }
+    public int Perceptiveness
+    {
+        get { return defaultValue - attributes["Stealth/Perceptiveness"]; }
         set { attributes["Stealth/Perceptiveness"] = value; }
     }
     public int Maximum_Consumption_Rate
