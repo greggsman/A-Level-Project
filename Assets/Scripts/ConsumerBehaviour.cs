@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class ConsumerBehaviour : MonoBehaviour
@@ -6,40 +7,59 @@ public class ConsumerBehaviour : MonoBehaviour
     public ConsumerData stats = new ConsumerData(); // stats will be provided when organism is born
 
     private SimulationSystemManager ssm;
-    private Rigidbody _rigidbody;
     private void Start()
     {
         ssm = FindObjectOfType<SimulationSystemManager>();
-        _rigidbody = GetComponent<Rigidbody>();
         foreach (string attributeKey in ConsumerData.attributeKeys)
         {
             stats.attributes[attributeKey] = ssm.simulationSettings[attributeKey];
         }
-        //_rigidbody.velocity = Vector3.forward * stats.Speed * Time.deltaTime;
     }
-    private void Update()
+    private void FixedUpdate()
     {
-        Vector3 target;
-        try
+        transform.position += FindTarget(stats.Perceptiveness) * stats.Speed * Time.fixedDeltaTime;
+    }
+    private Vector3 FindTarget(int perceptiveness)
+    {
+        Collider[] surroundingObjects = Physics.OverlapSphere(transform.position, perceptiveness, ssm.lm);
+        if(surroundingObjects.Length != 1) // 1 because surroundingObjects arrary still includes this consumer object
         {
-            GameObject nearestObject = Physics2D.CircleCast(new Vector2(transform.position.x, transform.position.y),
-                stats.Perceptiveness, Vector2.up).collider.gameObject; // finds the nearest object and returns it
-            target = Vector3.Normalize(nearestObject.transform.position - transform.position); // by default move towards
-            if (nearestObject.tag == "Consumer")
+            Vector3 shortestPath = new Vector3(perceptiveness, 100, perceptiveness);
+            foreach (Collider c in surroundingObjects)
             {
-                // at the moment testing whether it will run away from other organisms since 
-                ConsumerBehaviour nearestConsumerData = nearestObject.GetComponent<ConsumerBehaviour>();
-                if (nearestConsumerData.stats.Strength == stats.Strength) // run away
+                GameObject surroundingObject = c.gameObject;
+                if (name == surroundingObject.name) continue; // ignore if the organism detected is itself
+                if (surroundingObject.tag == "Consumer")
                 {
-                    target = Quaternion.AngleAxis(180f, Vector3.up) * target; // rotate 180;
+                    // at the moment testing whether it will run away from other organisms since 
+                    ConsumerBehaviour nearestConsumerData = surroundingObject.GetComponent<ConsumerBehaviour>();
+                    if (nearestConsumerData.stats.Strength == stats.Strength) // run away
+                    {
+                        return Vector3.Normalize(Quaternion.AngleAxis(180f, Vector3.up) * surroundingObject.transform.position) ; // rotate 180;
+                    }
                 }
-                // else continue moving towards
+                else // if its a producer
+                {
+                    Vector3 path = surroundingObject.transform.position - transform.position;
+                    if (path.sqrMagnitude < shortestPath.sqrMagnitude) // using sqrMagnitude to avoid sqrRoot every frame update
+                    {
+                        shortestPath = path;
+                    }
+                }
             }
+            shortestPath.y = 0f;
+            return Vector3.Normalize(shortestPath);
         }
-        catch
+        else
         {
-            target = transform.forward;
+            return Vector3.forward;
         }
-        _rigidbody.MovePosition(transform.position + target * stats.Speed * Time.deltaTime);
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "Producer")
+        {
+            Destroy(collision.gameObject);
+        }
     }
 }

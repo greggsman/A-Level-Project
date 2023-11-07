@@ -6,9 +6,11 @@ public class SimulationSystemManager : MonoBehaviour
 {
     public SetOfPreferences jsonPrefences;
     public GameObject terrainUnit;
+    public GameObject boundaryUnit;
     public GameObject consumer;
     public GameObject producer;
     public Dictionary<string, int> simulationSettings;
+    public LayerMask lm;
 
     private TerrainUnitData[,] terrainUnits;
     private Vector3 terrainScale;
@@ -23,6 +25,7 @@ public class SimulationSystemManager : MonoBehaviour
             simulationSettings.Add(preference.description, preference.value);
         }
         terrainScale = terrainUnit.transform.localScale;
+        boundaryUnit.transform.localScale = Vector3.left * terrainScale.x + Vector3.forward * terrainScale.z;
         SimulationGenerationInstructions();
     }
 
@@ -42,6 +45,7 @@ public class SimulationSystemManager : MonoBehaviour
                 // new position multiplied by the scale of a terrain unit (set by me)
             }
         }
+        //Instantiate(boundaryUnit, new Vector3
         Spawn("Initial Consumer Population", consumer); // avoids code repetition
         Spawn("Initial Producer Population", producer);
     }
@@ -55,11 +59,12 @@ public class SimulationSystemManager : MonoBehaviour
                 Vector3 organismLocation = new Vector3Int((int)Random.Range(0f, terrainSize),
                     1, (int)Random.Range(0f, terrainSize));
                 TerrainUnitData currentTerrainUnit = terrainUnits[(int)organismLocation.x, (int)organismLocation.z];
-                if (currentTerrainUnit.consumerSpawn || currentTerrainUnit.producerSpawn) { continue; }
+                if (currentTerrainUnit.consumerSpawn || currentTerrainUnit.producerSpawn) continue;
                 else
                 {
-                    Instantiate(entity, Vector3.Scale(organismLocation, terrainScale), entity.transform.localRotation); //loads entity into scene
+                    GameObject currentEntity = Instantiate(entity, Vector3.Scale(organismLocation, terrainScale), entity.transform.localRotation); //loads entity into scene
                     // position of organism needs to be scaled by terrain scale to make sure it doesn't spawn in one corner of the terrain
+                    currentEntity.name += i.ToString(); // adds the index to the name
                     placeNotFound = false;
                 }
             }
