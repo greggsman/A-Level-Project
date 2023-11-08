@@ -383,5 +383,9 @@ PrefabInstance:
       propertyPath: lm.m_Bits
       value: 64
       objectReference: {fileID: 0}
+    - target: {fileID: 6318440390767828221, guid: 20eb4a1ed7df64e5397d079555125eaa, type: 3}
+      propertyPath: boundaryUnit
+      value: 
+      objectReference: {fileID: 7875630790718179562, guid: cb0ca7ad676f148a8a8625d77107299c, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20eb4a1ed7df64e5397d079555125eaa, type: 3}

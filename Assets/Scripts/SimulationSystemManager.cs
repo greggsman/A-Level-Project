@@ -6,15 +6,14 @@ public class SimulationSystemManager : MonoBehaviour
 {
     public SetOfPreferences jsonPrefences;
     public GameObject terrainUnit;
-    public GameObject boundaryUnit;
     public GameObject consumer;
     public GameObject producer;
     public Dictionary<string, int> simulationSettings;
     public LayerMask lm;
 
     private TerrainUnitData[,] terrainUnits;
-    private Vector3 terrainScale;
-    private int terrainSize;
+    public Vector3 terrainScale;
+    public int terrainSize;
 
     private void Start()
     {
@@ -25,7 +24,6 @@ public class SimulationSystemManager : MonoBehaviour
             simulationSettings.Add(preference.description, preference.value);
         }
         terrainScale = terrainUnit.transform.localScale;
-        boundaryUnit.transform.localScale = Vector3.left * terrainScale.x + Vector3.forward * terrainScale.z;
         SimulationGenerationInstructions();
     }
 
@@ -40,7 +38,7 @@ public class SimulationSystemManager : MonoBehaviour
             for (int j = 0; j < terrainSize; j++)
             {
                 Vector3 newPosition = new Vector3(i, 0f, j); // position of a new terrain unit to be generated
-                terrainUnits[i,j] = Instantiate(terrainUnit, Vector3.Scale(newPosition, terrainScale),
+                terrainUnits[i, j] = Instantiate(terrainUnit, Vector3.Scale(newPosition, terrainScale),
                     terrainUnit.transform.localRotation).GetComponent<TerrainUnitData>();
                 // new position multiplied by the scale of a terrain unit (set by me)
             }
@@ -68,6 +66,6 @@ public class SimulationSystemManager : MonoBehaviour
                     placeNotFound = false;
                 }
             }
-        }  
+        }
     }
 }
