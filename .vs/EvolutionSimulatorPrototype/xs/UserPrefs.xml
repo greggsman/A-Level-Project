@@ -8,9 +8,9 @@
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="6a01bcc2-0f06-456d-bc24-1e2d954b8b6a" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/ConsumerBehaviour.cs">
     <Files>
-      <File FileName="Assets/Scripts/ConsumerBehaviour.cs" Line="12" Column="24" />
+      <File FileName="Assets/Scripts/ConsumerBehaviour.cs" Line="41" Column="10" />
       <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="33" Column="20" />
-      <File FileName="Assets/Scripts/Organism.cs" Line="26" Column="51" />
+      <File FileName="Assets/Scripts/Organism.cs" Line="14" Column="53" />
       <File FileName="Assets/Scripts/TerrainUnitData.cs" Line="10" Column="1" />
       <File FileName="Assets/Scripts/CameraMovement.cs" Line="11" Column="49" />
       <File FileName="Assets/Scripts/DataManager.cs" Line="62" Column="24" />
