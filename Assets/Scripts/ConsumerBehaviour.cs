@@ -55,7 +55,7 @@ public class ConsumerBehaviour : MonoBehaviour
                     {
                         return Vector3.Normalize(surroundingObject.transform.position - transform.position);
                     }
-                    if (nearestConsumerData.stats.Strength == stats.Strength) break;
+                    if (nearestConsumerData.stats.Strength == stats.Strength) return transform.forward;
                 }
                 else // if its a producer
                 {
@@ -65,6 +65,7 @@ public class ConsumerBehaviour : MonoBehaviour
                         shortestPath = path;
                     }
                 }
+
             }
             shortestPath.y = 0f;
             return Vector3.Normalize(shortestPath);
