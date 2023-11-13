@@ -9,13 +9,11 @@ public class ConsumerBehaviour : MonoBehaviour
 
     private SimulationSystemManager ssm;
     private Rigidbody _rigidbody;
-    private List<int> indexesToIgnore;
     int terrainSize;
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
         ssm = FindObjectOfType<SimulationSystemManager>();
-        indexesToIgnore = new List<int>();
         foreach (string attributeKey in ConsumerData.attributeKeys)
         {
             stats.attributes[attributeKey] = ssm.simulationSettings[attributeKey];

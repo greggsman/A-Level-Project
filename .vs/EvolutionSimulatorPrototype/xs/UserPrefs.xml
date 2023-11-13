@@ -1,19 +1,16 @@
 ﻿<Properties StartupConfiguration="{403FC2B9-A586-FC53-AB01-BC31321D038B}|">
-  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="6a01bcc2-0f06-456d-bc24-1e2d954b8b6a" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/ConsumerBehaviour.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/DataManager.cs">
     <Files>
-      <File FileName="Assets/Scripts/ConsumerBehaviour.cs" Line="33" Column="113" />
-      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="33" Column="20" />
+      <File FileName="Assets/Scripts/ConsumerBehaviour.cs" Line="16" Column="59" />
+      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="26" Column="41" />
+      <File FileName="Assets/Scripts/DataManager.cs" Line="75" Column="1" />
       <File FileName="Assets/Scripts/Organism.cs" Line="14" Column="53" />
       <File FileName="Assets/Scripts/TerrainUnitData.cs" Line="10" Column="1" />
       <File FileName="Assets/Scripts/CameraMovement.cs" Line="11" Column="49" />
-      <File FileName="Assets/Scripts/DataManager.cs" Line="62" Column="24" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -21,7 +18,7 @@
           <Node name="EvolutionSimulatorPrototype" expanded="True">
             <Node name="Assets" expanded="True">
               <Node name="Scripts" expanded="True">
-                <Node name="ConsumerBehaviour.cs" selected="True" />
+                <Node name="DataManager.cs" selected="True" />
               </Node>
             </Node>
           </Node>
@@ -37,4 +34,7 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="fde71f18-ea7b-41ac-9d42-feac1b7e2c94" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
