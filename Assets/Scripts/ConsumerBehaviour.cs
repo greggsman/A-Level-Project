@@ -9,7 +9,6 @@ public class ConsumerBehaviour : MonoBehaviour
 
     private SimulationSystemManager ssm;
     private Rigidbody _rigidbody;
-    int terrainSize;
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
@@ -18,22 +17,16 @@ public class ConsumerBehaviour : MonoBehaviour
         {
             stats.attributes[attributeKey] = ssm.simulationSettings[attributeKey];
         }
-        terrainSize = ssm.terrainSize;
     }
     private void FixedUpdate()
     {
-        if (transform.position.x < 0 || transform.position.x > (terrainSize) * ssm.terrainScale.x ||
-            transform.position.z < 0 || transform.position.z > (terrainSize) * ssm.terrainScale.z)
-        {
-            transform.Rotate(Vector3.up, 180f);
-        }
-        Vector3 target = FindTarget(stats.Perceptiveness);
-        transform.position += target * stats.Speed * Time.fixedDeltaTime;
-        transform.LookAt(transform.position + target);
+        Vector3 movementVector = FindTarget(stats.Perceptiveness);
+        transform.position += movementVector * stats.Speed * Time.fixedDeltaTime;
     }
     private Vector3 FindTarget(int perceptiveness)
     {
         List<Collider> surroundingObjects = Physics.OverlapSphere(transform.position, perceptiveness, ssm.lm).ToList();
+        bool allSurroundingsAreEqual = true;
         if(surroundingObjects.Count != 1) // 1 because surroundingObjects arrary still includes this consumer object
         {
             Vector3 shortestPath = new Vector3(perceptiveness, 100, perceptiveness);
@@ -47,28 +40,35 @@ public class ConsumerBehaviour : MonoBehaviour
                     ConsumerBehaviour nearestConsumerData = surroundingObject.GetComponent<ConsumerBehaviour>();
                     if (nearestConsumerData.stats.Strength > stats.Strength) // run away
                     {
+                        Debug.Log("DEBUGGING Found a weaker organism");
+                        Debug.Log("This strength " + stats.Strength + " their strength: " + stats.Strength);
                         return Vector3.Normalize(Quaternion.AngleAxis(180f, Vector3.up) * surroundingObject.transform.position); // rotate 180;
                     }
                     if (nearestConsumerData.stats.Strength < stats.Strength)
                     {
+                        Debug.Log("DEBUGGING Found a stronger organism");
+                        Debug.Log("This strength " + stats.Strength + " their strength: " + stats.Strength);
                         return Vector3.Normalize(surroundingObject.transform.position - transform.position);
                     }
-                    if (nearestConsumerData.stats.Strength == stats.Strength) return transform.forward;
+                    if (nearestConsumerData.stats.Strength == stats.Strength) continue;
                 }
-                else // if its a producer
+                else // if it finds a consumer
                 {
+                    allSurroundingsAreEqual = false;
                     Vector3 path = surroundingObject.transform.position - transform.position;
                     if (path.sqrMagnitude < shortestPath.sqrMagnitude) // using sqrMagnitude to avoid sqrRoot every frame update
                     {
                         shortestPath = path;
                     }
                 }
-
             }
+            if (allSurroundingsAreEqual) return Vector3.zero;
             shortestPath.y = 0f;
+            Debug.Log("DEBUGGING Shortest path found");
             return Vector3.Normalize(shortestPath);
         }
-        return transform.forward;
+        Debug.Log("DEBUGGING No surroundingobjects left");
+        return Vector3.zero;
     }
     private void OnCollisionEnter(Collision collision)
     {

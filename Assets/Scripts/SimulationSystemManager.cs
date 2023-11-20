@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+public class BinaryTree
+{
 
+}
 public class SimulationSystemManager : MonoBehaviour
 {
     public SetOfPreferences jsonPrefences;
