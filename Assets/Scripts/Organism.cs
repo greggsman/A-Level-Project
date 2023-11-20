@@ -45,7 +45,12 @@ public class ConsumerData : Organism
     {
         get { return attributes["Maximum Consumption Rate"]; }
         set { attributes["Maximum Consumption Rate"] = value; }
-    } 
+    }
+    public bool StarterOrganism
+    {
+        get { return starterOrganism; }
+        set { starterOrganism = value; }
+    }
     public ConsumerData()
     {
         for(int i = 0; i < attributeKeys.Length; i++)

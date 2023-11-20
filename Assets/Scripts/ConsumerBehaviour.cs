@@ -13,9 +13,12 @@ public class ConsumerBehaviour : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody>();
         ssm = FindObjectOfType<SimulationSystemManager>();
-        foreach (string attributeKey in ConsumerData.attributeKeys)
+        if (stats.StarterOrganism)
         {
-            stats.attributes[attributeKey] = ssm.simulationSettings[attributeKey];
+            foreach (string attributeKey in ConsumerData.attributeKeys)
+            {
+                stats.attributes[attributeKey] = ssm.simulationSettings[attributeKey];
+            }
         }
     }
     private void FixedUpdate()
