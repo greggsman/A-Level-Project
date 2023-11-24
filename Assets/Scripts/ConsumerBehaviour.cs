@@ -7,17 +7,18 @@ public class ConsumerBehaviour : MonoBehaviour
 {
     public ConsumerData stats = new ConsumerData(); // stats will be provided when organism is born
 
-    private SimulationSystemManager ssm;
+    public const float energyRegulator = 0.001f;
+    private SimulationSystemManager simulationSystemManager;
     private Rigidbody _rigidbody;
     private void Start()
     {
-        _rigidbody = GetComponent<Rigidbody>();
-        ssm = FindObjectOfType<SimulationSystemManager>();
+        _rigidbody = GetComponent<Rigidbody>(); // set this variable as the rigidbody attached to this consumer
+        simulationSystemManager = FindObjectOfType<SimulationSystemManager>(); // finds the simulation system manager gameobject in the scene
         if (stats.StarterOrganism)
         {
             foreach (string attributeKey in ConsumerData.attributeKeys)
             {
-                stats.attributes[attributeKey] = ssm.simulationSettings[attributeKey];
+                stats.attributes[attributeKey] = simulationSystemManager.simulationSettings[attributeKey];
             }
         }
     }
@@ -25,10 +26,15 @@ public class ConsumerBehaviour : MonoBehaviour
     {
         Vector3 movementVector = FindTarget(stats.Perceptiveness);
         transform.position += movementVector * stats.Speed * Time.fixedDeltaTime;
+        transform.LookAt(transform.position + movementVector);
+        stats.Energy -= (movementVector* stats.Speed).magnitude * energyRegulator;
+        // rather than subtract stats.Speed, since that will always be the magnitude as movementVector is normalized,
+        // we multiply by movementVector in case movementVector has no magnitude i.e. its at a standstill
+        Debug.Log(stats.Energy);
     }
     private Vector3 FindTarget(int perceptiveness)
     {
-        List<Collider> surroundingObjects = Physics.OverlapSphere(transform.position, perceptiveness, ssm.lm).ToList();
+        List<Collider> surroundingObjects = Physics.OverlapSphere(transform.position, perceptiveness, simulationSystemManager.lm).ToList();
         bool allSurroundingsAreEqual = true;
         if(surroundingObjects.Count != 1) // 1 because surroundingObjects arrary still includes this consumer object
         {
@@ -37,20 +43,14 @@ public class ConsumerBehaviour : MonoBehaviour
             {
                 GameObject surroundingObject = surroundingObjects[i].gameObject;
                 if (surroundingObject.tag == "Consumer")
-                {
-                    if (name == surroundingObject.name) continue; // ignore if the organism detected is itself
-                    // at the moment testing whether it will run away from other organisms since there is no differentiation between organisms  
+                { 
                     ConsumerBehaviour nearestConsumerData = surroundingObject.GetComponent<ConsumerBehaviour>();
                     if (nearestConsumerData.stats.Strength > stats.Strength) // run away
                     {
-                        Debug.Log("DEBUGGING Found a weaker organism");
-                        Debug.Log("This strength " + stats.Strength + " their strength: " + stats.Strength);
                         return Vector3.Normalize(Quaternion.AngleAxis(180f, Vector3.up) * surroundingObject.transform.position); // rotate 180;
                     }
                     if (nearestConsumerData.stats.Strength < stats.Strength)
                     {
-                        Debug.Log("DEBUGGING Found a stronger organism");
-                        Debug.Log("This strength " + stats.Strength + " their strength: " + stats.Strength);
                         return Vector3.Normalize(surroundingObject.transform.position - transform.position);
                     }
                     if (nearestConsumerData.stats.Strength == stats.Strength) continue;
@@ -67,10 +67,8 @@ public class ConsumerBehaviour : MonoBehaviour
             }
             if (allSurroundingsAreEqual) return Vector3.zero;
             shortestPath.y = 0f;
-            Debug.Log("DEBUGGING Shortest path found");
             return Vector3.Normalize(shortestPath);
         }
-        Debug.Log("DEBUGGING No surroundingobjects left");
         return Vector3.zero;
     }
     private void OnCollisionEnter(Collision collision)

@@ -1,19 +1,12 @@
 ﻿<Properties StartupConfiguration="{403FC2B9-A586-FC53-AB01-BC31321D038B}|">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="e73aa665-80e9-498b-bb92-ef84191113a7" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/SimulationSystemManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/ConsumerBehaviour.cs">
     <Files>
-      <File FileName="Assets/Scripts/ConsumerBehaviour.cs" Line="79" Column="6" />
-      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="130" Column="2" />
-      <File FileName="Assets/Scripts/DataManager.cs" Line="100" Column="31" />
-      <File FileName="Assets/Scripts/Organism.cs" Line="8" Column="2" />
-      <File FileName="Assets/Scripts/TerrainUnitData.cs" Line="8" Column="31" />
-      <File FileName="Assets/Scripts/CameraMovement.cs" Line="11" Column="49" />
+      <File FileName="Assets/Scripts/ConsumerBehaviour.cs" Line="81" Column="7" />
+      <File FileName="Assets/Scripts/Organism.cs" Line="52" Column="6" />
+      <File FileName="Assets/Scripts/Utilities.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/TerrainUnitData.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="189" Column="10" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -21,7 +14,7 @@
           <Node name="EvolutionSimulatorPrototype" expanded="True">
             <Node name="Assets" expanded="True">
               <Node name="Scripts" expanded="True">
-                <Node name="SimulationSystemManager.cs" selected="True" />
+                <Node name="ConsumerBehaviour.cs" selected="True" />
               </Node>
             </Node>
           </Node>
@@ -37,4 +30,10 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="10432c26-5d5e-4a0d-b308-c9607fa14ba4" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
 </Properties>

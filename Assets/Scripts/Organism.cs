@@ -3,23 +3,32 @@ using System.Collections.Generic;
 
 public abstract class Organism
 {
+    protected const int defaultValue = 100;
     protected float energy { get; set; }
     protected bool starterOrganism { get; set; }
-}
-public class ConsumerData : Organism
-{
-    private const int defaultValue = 100;
-    // attributes
-    public static string[] attributeKeys = new string[] { "Strength/Speed", "Stealth/Perceptiveness", "Maximum Consumption Rate" };
-    // this dict is public because I need to access it in Simulation System Manager in Start(), but it kind of defeats the point of abstraction??
-    public Dictionary<string, int> attributes = new Dictionary<string, int>();
 
-    public string ID;
     public float Energy
     {
         get { return energy; }
         set { energy = value; }
     }
+    public bool StarterOrganism
+    {
+        get { return starterOrganism; }
+        set { starterOrganism = value; }
+    }
+    public Organism()
+    {
+        energy = defaultValue;
+        starterOrganism = false;
+    }
+}
+public class ConsumerData : Organism
+{
+    public static string[] attributeKeys = new string[] { "Strength/Speed", "Stealth/Perceptiveness", "Maximum Consumption Rate" };
+    public Dictionary<string, int> attributes = new Dictionary<string, int>();
+
+    public string ID;
     // default value + scale value
     public int Strength
     {
@@ -46,12 +55,7 @@ public class ConsumerData : Organism
         get { return attributes["Maximum Consumption Rate"]; }
         set { attributes["Maximum Consumption Rate"] = value; }
     }
-    public bool StarterOrganism
-    {
-        get { return starterOrganism; }
-        set { starterOrganism = value; }
-    }
-    public ConsumerData()
+    public ConsumerData() : base()
     {
         for(int i = 0; i < attributeKeys.Length; i++)
         {
@@ -63,4 +67,8 @@ public enum ProducerType { One, Two, Three }
 public class ProducerData : Organism
 {
     public ProducerType type;
+    public ProducerData(ProducerType type) : base()
+    {
+        this.type = type;
+    }
 }

@@ -103,32 +103,39 @@ public class SimulationSystemManager : MonoBehaviour
                 // new position multiplied by the scale of a terrain unit (set by me)
             }
         }
-        //Instantiate(boundaryUnit, new Vector3
-        Spawn("Initial Consumer Population", consumer); // avoids code repetition
-        Spawn("Initial Producer Population", producer);
-    }
-    private void Spawn(string entity_count, GameObject entity) // spawning for first generation organisms
-    {
-        for (int i = 0; i < simulationSettings[entity_count]; i++)
+        for (int i = 0; i < simulationSettings["Initial Consumer Population"]; i++)
         {
-            bool placeNotFound = true;
-            while (placeNotFound)
-            {
-                Vector3 organismLocation = new Vector3Int((int)Random.Range(0f, terrainSize),
-                    1, (int)Random.Range(0f, terrainSize));
-                TerrainUnitData currentTerrainUnit = terrainUnits[(int)organismLocation.x, (int)organismLocation.z];
-                if (currentTerrainUnit.consumerSpawn || currentTerrainUnit.producerSpawn) continue;
-                else
-                {
-                    GameObject currentEntity = Instantiate(entity, Vector3.Scale(organismLocation, terrainScale), entity.transform.localRotation); //loads entity into scene
-                    // position of organism needs to be scaled by terrain scale to make sure it doesn't spawn in one corner of the terrain
-                    currentEntity.name += i.ToString(); // adds the index to the name
-                    currentEntity.GetComponent<ConsumerBehaviour>().stats.StarterOrganism = true;
-                    placeNotFound = false;
-                }
-            }
+            ConsumerBehaviour currentConsumer = SpawnRandom(consumer).GetComponent<ConsumerBehaviour>();
+            currentConsumer.stats.StarterOrganism = true;
+        }
+        for (int i = 0; i < simulationSettings["Initial Producer Population"]; i++)
+        {
+            ProducerBehaviour currentProducer = SpawnRandom(producer).GetComponent<ProducerBehaviour>();
+            currentProducer.stats.StarterOrganism = true;
         }
     }
+    private GameObject SpawnRandom(GameObject entityPrefab)
+    {
+        bool placeNotFound = true;
+        GameObject prefabSceneInstance = new GameObject();
+        while (placeNotFound)
+        {
+            Vector3 organismLocation = new Vector3Int((int)Random.Range(0f, terrainSize),
+                1, (int)Random.Range(0f, terrainSize));
+            TerrainUnitData currentTerrainUnit = terrainUnits[(int)organismLocation.x, (int)organismLocation.z];
+            if (currentTerrainUnit.consumerSpawn || currentTerrainUnit.producerSpawn) continue;
+            else
+            {
+                prefabSceneInstance = Instantiate(entityPrefab, Vector3.Scale(organismLocation, terrainScale), entityPrefab.transform.localRotation);
+                //loads entity into scene
+                // position of organism needs to be scaled by terrain scale to make sure it doesn't spawn in one corner of the terrain
+                placeNotFound = false;
+            }
+        }
+        return prefabSceneInstance;
+    }
+
+    /*
     public static Vector3[] MergeSort(Vector3[] objects)
     {
         Vector3[] left;
@@ -189,4 +196,5 @@ public class SimulationSystemManager : MonoBehaviour
         }
         return newList;
     }
+    */
 }
