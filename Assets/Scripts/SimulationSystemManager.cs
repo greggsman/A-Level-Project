@@ -174,7 +174,7 @@ public class SimulationSystemManager : MonoBehaviour
     {
         familyTrees[index].AddNode(newData);
     }
-    /*
+
     public static Vector3[] MergeSort(Vector3[] objects)
     {
         Vector3[] left;
@@ -235,5 +235,4 @@ public class SimulationSystemManager : MonoBehaviour
         }
         return newList;
     }
-    */
 }
