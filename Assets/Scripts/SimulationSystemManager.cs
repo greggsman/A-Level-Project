@@ -1,6 +1,7 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 class Binarytree<T>
 {
     public List<T> nodes;
@@ -54,12 +55,14 @@ class Binarytree<T>
         PreOrderTraversal(leftIndexes[rootIndex]);
         PreOrderTraversal(rightIndexes[rootIndex]);
     }
-    public void PrintAdjacencyList()
+    public void PrintDebugAdjacencyList()
     {
+        string message = "";
         for (int i = 0; i < nodes.Count; i++)
         {
-            // Console.Write(nodes[i] + " " + leftIndexes[i] + " " + rightIndexes[i] + "\n");
+            message += nodes[i] + " " + leftIndexes[i] + " " + rightIndexes[i] + "\n";
         }
+        Debug.Log(message);
     }
 }
 public class SimulationSystemManager : MonoBehaviour
@@ -70,15 +73,34 @@ public class SimulationSystemManager : MonoBehaviour
     public GameObject producer;
     public Dictionary<string, int> simulationSettings;
     public LayerMask lm;
+    private List<Binarytree<ConsumerData>> familyTrees;
 
     private TerrainUnitData[,] terrainUnits;
     public Vector3 terrainScale;
     public int terrainSize;
 
+    public Slider MutationChanceSlider;
+    public Text MutationChanceText;
+    public Slider ReproductionThresholdSlider;
+    public Text ReproductionThresholdText;
+
+    private float mutationChance;
+    public float MutationChance
+    {
+        get { return mutationChance; }
+    }
+    private float reproductionThreshold;
+    public float ReproductionThreshold
+    {
+        get { return reproductionThreshold; }
+    }
     private void Start()
     {
         simulationSettings = new Dictionary<string, int>();
         jsonPrefences = DataManager.preferencesToRun;
+        familyTrees = new List<Binarytree<ConsumerData>>();
+        ReproductionThresholdSlider.minValue = ConsumerData.DefaultEnergyValue * 2f;
+        ReproductionThresholdSlider.maxValue = ConsumerData.DefaultEnergyValue * 4f;
         foreach (Preference preference in jsonPrefences.preferences)
         {
             simulationSettings.Add(preference.description, preference.value);
@@ -86,7 +108,13 @@ public class SimulationSystemManager : MonoBehaviour
         terrainScale = terrainUnit.transform.localScale;
         SimulationGenerationInstructions();
     }
-
+    private void Update()
+    {
+        mutationChance = MutationChanceSlider.value;
+        MutationChanceText.text = "Mutation chance: " + Math.Round(mutationChance, 2);
+        reproductionThreshold = ReproductionThresholdSlider.value;
+        ReproductionThresholdText.text = "Reproduction threshold: " + Math.Round(reproductionThreshold, 2);
+    }
     private void SimulationGenerationInstructions()
     {
         // possible opportunity for recursion here
@@ -103,38 +131,49 @@ public class SimulationSystemManager : MonoBehaviour
                 // new position multiplied by the scale of a terrain unit (set by me)
             }
         }
-        for (int i = 0; i < simulationSettings["Initial Consumer Population"]; i++)
+        for (int i = 0; i < simulationSettings["Initial Consumer Population"]; i++) // for CONSUMERS
         {
-            ConsumerBehaviour currentConsumer = SpawnRandom(consumer).GetComponent<ConsumerBehaviour>();
-            currentConsumer.stats.StarterOrganism = true;
+            ConsumerData currentConsumer = SpawnRandom(consumer).GetComponent<ConsumerBehaviour>().stats;
+            currentConsumer.StarterOrganism = true;
+            familyTrees.Add(new Binarytree<ConsumerData>(-1, currentConsumer)); // create a new binary tree
+            currentConsumer.familyTreeIndex = i;
         }
         for (int i = 0; i < simulationSettings["Initial Producer Population"]; i++)
         {
             ProducerBehaviour currentProducer = SpawnRandom(producer).GetComponent<ProducerBehaviour>();
-            currentProducer.stats.StarterOrganism = true;
+            currentProducer.stats = new ProducerData(ProducerType.One);
         }
     }
-    private GameObject SpawnRandom(GameObject entityPrefab)
+    public GameObject SpawnRandom(GameObject entityPrefab)
     {
         bool placeNotFound = true;
-        GameObject prefabSceneInstance = new GameObject();
+        GameObject prefabSceneInstance = entityPrefab; // rather than new gameobject
         while (placeNotFound)
         {
-            Vector3 organismLocation = new Vector3Int((int)Random.Range(0f, terrainSize),
-                1, (int)Random.Range(0f, terrainSize));
+            Vector3 organismLocation = new Vector3Int((int)UnityEngine.Random.Range(0f, terrainSize),
+                1, (int)UnityEngine.Random.Range(0f, terrainSize));
             TerrainUnitData currentTerrainUnit = terrainUnits[(int)organismLocation.x, (int)organismLocation.z];
-            if (currentTerrainUnit.consumerSpawn || currentTerrainUnit.producerSpawn) continue;
+            if (currentTerrainUnit.alreadyHasEntity) continue;
             else
             {
                 prefabSceneInstance = Instantiate(entityPrefab, Vector3.Scale(organismLocation, terrainScale), entityPrefab.transform.localRotation);
                 //loads entity into scene
                 // position of organism needs to be scaled by terrain scale to make sure it doesn't spawn in one corner of the terrain
                 placeNotFound = false;
+                currentTerrainUnit.alreadyHasEntity = true;
             }
         }
         return prefabSceneInstance;
     }
-
+    public void Respawn(ProducerType producerType)
+    {
+        ProducerBehaviour producerBehaviour = SpawnRandom(producer).GetComponent<ProducerBehaviour>();
+        producerBehaviour.stats = new ProducerData(producerType);
+    }
+    public void AddToFamilyTrees(int index, ConsumerData newData)
+    {
+        familyTrees[index].AddNode(newData);
+    }
     /*
     public static Vector3[] MergeSort(Vector3[] objects)
     {

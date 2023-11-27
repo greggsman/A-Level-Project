@@ -4,6 +4,5 @@ using UnityEngine;
 
 public class TerrainUnitData : MonoBehaviour
 {
-    public bool consumerSpawn;
-    public bool producerSpawn;
+    public bool alreadyHasEntity;
 }

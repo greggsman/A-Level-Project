@@ -134,7 +134,7 @@ public class DataManager : MonoBehaviour
             currentPreference.name = attributeName;
             Setting setting = currentPreference.GetComponentInChildren<Setting>();
 
-            setting.slider.minValue = -100;
+            setting.slider.minValue = 1;
             setting.slider.maxValue = 100;
         }
     }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 public abstract class Organism
 {
-    protected const int defaultValue = 100;
     protected float energy { get; set; }
     protected bool starterOrganism { get; set; }
 
@@ -19,44 +18,53 @@ public abstract class Organism
     }
     public Organism()
     {
-        energy = defaultValue;
         starterOrganism = false;
     }
 }
 public class ConsumerData : Organism
+    // fix this
+    // proportionality constant rather than default value
 {
+    private static int defaultEnergyValue = 100;
+    public static int DefaultEnergyValue
+    {
+        get { return defaultEnergyValue; }
+    }
+    private static int proportionalityConstant = 1000;
+    public int familyTreeIndex;
     public static string[] attributeKeys = new string[] { "Strength/Speed", "Stealth/Perceptiveness", "Maximum Consumption Rate" };
-    public Dictionary<string, int> attributes = new Dictionary<string, int>();
+    public Dictionary<string, float> attributes = new Dictionary<string, float>();
 
     public string ID;
     // default value + scale value
-    public int Strength
+    public float Strength
     {
-        get { return defaultValue + attributes["Strength/Speed"]; }
+        get { return attributes["Strength/Speed"]; }
         set { attributes["Strength/Speed"] = value; }
     }
-    public int Speed
+    public float Speed
     {
-        get { return defaultValue - attributes["Strength/Speed"]; }
+        get { return proportionalityConstant / attributes["Strength/Speed"]; }
         set { attributes["Strength/Speed"] = value; }
     }
-    public int Stealth
+    public float Stealth
     {
-        get { return defaultValue + attributes["Stealth/Perceptiveness"]; }
+        get { return defaultEnergyValue + attributes["Stealth/Perceptiveness"]; }
         set { attributes["Stealth/Perceptiveness"] = value; }
     }
-    public int Perceptiveness
+    public float Perceptiveness
     {
-        get { return defaultValue - attributes["Stealth/Perceptiveness"]; }
+        get { return proportionalityConstant / attributes["Stealth/Perceptiveness"]; }
         set { attributes["Stealth/Perceptiveness"] = value; }
     }
-    public int Maximum_Consumption_Rate
+    public float Maximum_Consumption_Rate
     {
         get { return attributes["Maximum Consumption Rate"]; }
         set { attributes["Maximum Consumption Rate"] = value; }
     }
     public ConsumerData() : base()
     {
+        energy = defaultEnergyValue;
         for(int i = 0; i < attributeKeys.Length; i++)
         {
             attributes.Add(attributeKeys[i], 0);
@@ -66,9 +74,13 @@ public class ConsumerData : Organism
 public enum ProducerType { One, Two, Three }
 public class ProducerData : Organism
 {
+    private const int defaultEnergy = 50;
     public ProducerType type;
     public ProducerData(ProducerType type) : base()
     {
         this.type = type;
+        if(type == ProducerType.One) { energy = defaultEnergy; }
+        if(type == ProducerType.Two) { energy = defaultEnergy * 1.5f; }
+        if(type == ProducerType.Three) { energy = defaultEnergy * 2f; }
     }
 }
