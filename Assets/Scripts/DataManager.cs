@@ -33,6 +33,8 @@ public class SetOfPreferences
 public class DataManager : MonoBehaviour
 {
     public const int MaximumNoOfFiles = 6;
+    public int attributeMaxSliderValue = 100;
+
     private const int diffBetweenFileUIs = 60; // How far apart the options to access a new file should be spread out on the main menu
     private const int diffBetweenPreferences = 30;
 
@@ -72,7 +74,7 @@ public class DataManager : MonoBehaviour
         // /Users/alancgregg/Library/Application Support/DefaultCompany/EvolutionSimulatorPrototype/Preferences_Data/ is the persistent data path
     }
 
-    private void SerializeSettings() // serializes user's preferences in JSON, run when Commit Prefences is pressed
+    public void SerializeSettings() // serializes user's preferences in JSON, run when Commit Prefences is pressed
     {
         if(Directory.GetFiles(folderPath).Length >= MaximumNoOfFiles) // using >= because INDEXING STARTS AT 0!!!!
         {
@@ -101,7 +103,6 @@ public class DataManager : MonoBehaviour
     {
         preferencesSettings.SetActive(false);
         mainMenu.SetActive(true);
-
         // load UI options for each save file in the main menu
         string[] files = Directory.GetFiles(folderPath);
         for (int i = 0; i < files.Length; i++)
@@ -110,7 +111,7 @@ public class DataManager : MonoBehaviour
                 fileUI.transform.rotation, loadFilesFromHere);
             currentFileUI.GetComponent<FileUI>().filePath = files[i]; // assigns the filePath for each option in the main menu
             currentFileUI.GetComponent<Text>().text = files[i].Substring(folderPath.Length); // displays the name of the file in the main menu
-        }        
+        }
     }
 
     public void GoToNewPreferenceMenu()
@@ -123,19 +124,21 @@ public class DataManager : MonoBehaviour
         for (int i = 0; i < loadFilesFromHere.childCount; i++) // Destroy all file UI elements
         {
             Destroy(loadFilesFromHere.GetChild(i).gameObject);
-        } 
+        }
 
+        // First generation attributes
         for (int i = 0; i < ConsumerData.attributeKeys.Length; i++)
         {
             GameObject currentPreference = Instantiate(initialAttributePreference, loadPreferencesFromHere.position + Vector3.down * (i + 1) * diffBetweenPreferences,
                 initialAttributePreference.transform.rotation, loadPreferencesFromHere);
-            string attributeName = ConsumerData.attributeKeys[i]; ;
+
+            string attributeName = ConsumerData.attributeKeys[i];
             currentPreference.GetComponent<Text>().text = attributeName;
             currentPreference.name = attributeName;
-            Setting setting = currentPreference.GetComponentInChildren<Setting>();
 
-            setting.slider.minValue = 1;
-            setting.slider.maxValue = 100;
+            Slider slider = currentPreference.GetComponentInChildren<Slider>();
+            slider.minValue = 1;
+            slider.maxValue = 100;
         }
     }
 

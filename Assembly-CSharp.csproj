@@ -58,12 +58,13 @@
   <ItemGroup>
     <Compile Include="Assets/Scripts/ProducerBehaviour.cs" />
     <Compile Include="Assets/Scripts/DataManager.cs" />
-    <Compile Include="Assets/Scripts/Setting.cs" />
+    <Compile Include="Assets/Scripts/PreferenceBehaviour.cs" />
     <Compile Include="Assets/Scripts/ConsumerBehaviour.cs" />
     <Compile Include="Assets/Scripts/Organism.cs" />
     <Compile Include="Assets/Scripts/FileUI.cs" />
     <Compile Include="Assets/Scripts/CameraMovement.cs" />
     <Compile Include="Assets/Scripts/SimulationSystemManager.cs" />
+    <Compile Include="Assets/Scripts/Setting.cs" />
     <Compile Include="Assets/Scripts/TerrainUnitData.cs" />
   </ItemGroup>
   <ItemGroup>

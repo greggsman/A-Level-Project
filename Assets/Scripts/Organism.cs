@@ -1,4 +1,5 @@
 // raw c#
+using System;
 using System.Collections.Generic;
 
 public abstract class Organism
@@ -32,6 +33,7 @@ public class ConsumerData : Organism
     }
     private static int proportionalityConstant = 1000;
     public int familyTreeIndex;
+    public float timeInitialized;
     public static string[] attributeKeys = new string[] { "Strength/Speed", "Stealth/Perceptiveness", "Maximum Consumption Rate" };
     public Dictionary<string, float> attributes = new Dictionary<string, float>();
 
@@ -62,9 +64,10 @@ public class ConsumerData : Organism
         get { return attributes["Maximum Consumption Rate"]; }
         set { attributes["Maximum Consumption Rate"] = value; }
     }
-    public ConsumerData() : base()
+    public ConsumerData(float timeInitialized) : base()
     {
         energy = defaultEnergyValue;
+        this.timeInitialized = timeInitialized;
         for(int i = 0; i < attributeKeys.Length; i++)
         {
             attributes.Add(attributeKeys[i], 0);

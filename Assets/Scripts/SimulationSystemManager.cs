@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
+
 class Binarytree<T>
 {
     public List<T> nodes;
@@ -65,20 +67,43 @@ class Binarytree<T>
         Debug.Log(message);
     }
 }
+[Serializable]
+class OutputData // for one family tree
+{
+    public string file_ID;
+    public float timeInSeconds;
+    public int consumerPopulation = 0;
+    public int producerPopulation = 0;
+    public List<ConsumerData> consumersInTree;
+    public float pmcc; // correlation
+
+    public OutputData()
+    {
+        DateTime now = DateTime.Now;
+        file_ID = "Snapshot taken " + now.ToLongDateString() + " " + now.ToLongTimeString();
+        consumersInTree = new List<ConsumerData>();
+        pmcc = 1;
+    }
+}
 public class SimulationSystemManager : MonoBehaviour
 {
     public SetOfPreferences jsonPrefences;
+
+    private string folderPath;
+    private List<Binarytree<ConsumerData>> familyTrees;
+    private OutputData snapshot;
+
     public GameObject terrainUnit;
     public GameObject consumer;
     public GameObject producer;
+
     public Dictionary<string, int> simulationSettings;
     public LayerMask lm;
-    private List<Binarytree<ConsumerData>> familyTrees;
 
     private TerrainUnitData[,] terrainUnits;
+
     public Vector3 terrainScale;
     public int terrainSize;
-
     public Slider MutationChanceSlider;
     public Text MutationChanceText;
     public Slider ReproductionThresholdSlider;
@@ -96,9 +121,11 @@ public class SimulationSystemManager : MonoBehaviour
     }
     private void Start()
     {
+        string folderName = Path.DirectorySeparatorChar + "Snapshot_Data" + Path.DirectorySeparatorChar;
+        folderPath = Application.persistentDataPath + folderName;
         simulationSettings = new Dictionary<string, int>();
         jsonPrefences = DataManager.preferencesToRun;
-        familyTrees = new List<Binarytree<ConsumerData>>();
+        snapshot = new OutputData();
         ReproductionThresholdSlider.minValue = ConsumerData.DefaultEnergyValue * 2f;
         ReproductionThresholdSlider.maxValue = ConsumerData.DefaultEnergyValue * 4f;
         foreach (Preference preference in jsonPrefences.preferences)
@@ -137,11 +164,13 @@ public class SimulationSystemManager : MonoBehaviour
             currentConsumer.StarterOrganism = true;
             familyTrees.Add(new Binarytree<ConsumerData>(-1, currentConsumer)); // create a new binary tree
             currentConsumer.familyTreeIndex = i;
+            snapshot.consumerPopulation++;
         }
         for (int i = 0; i < simulationSettings["Initial Producer Population"]; i++)
         {
             ProducerBehaviour currentProducer = SpawnRandom(producer).GetComponent<ProducerBehaviour>();
             currentProducer.stats = new ProducerData(ProducerType.One);
+            snapshot.producerPopulation++;
         }
     }
     public GameObject SpawnRandom(GameObject entityPrefab)
@@ -170,8 +199,13 @@ public class SimulationSystemManager : MonoBehaviour
         ProducerBehaviour producerBehaviour = SpawnRandom(producer).GetComponent<ProducerBehaviour>();
         producerBehaviour.stats = new ProducerData(producerType);
     }
-    public void AddToFamilyTrees(int index, ConsumerData newData)
+    public void AddToFamilyTrees(int index, ConsumerData newData) // public method so that this can be called in consumerbehaviour.cs
     {
         familyTrees[index].AddNode(newData);
+    }
+    public void TakeSnapshot()
+    {
+        string filename = folderPath + snapshot.file_ID;
+        Debug.Log(filename);
     }
 }
