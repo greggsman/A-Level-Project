@@ -32,12 +32,13 @@ public class ConsumerData : Organism
         get { return defaultEnergyValue; }
     }
     private static int proportionalityConstant = 1000;
-    public int familyTreeIndex;
-    public float timeInitialized;
     public static string[] attributeKeys = new string[] { "Strength/Speed", "Stealth/Perceptiveness", "Maximum Consumption Rate" };
     public Dictionary<string, float> attributes = new Dictionary<string, float>();
 
-    public string ID;
+    // this data will be serialized
+    public int familyTreeIndex;
+    public float timeInitialized;
+    public int generation;
     // default value + scale value
     public float Strength
     {
@@ -72,6 +73,24 @@ public class ConsumerData : Organism
         {
             attributes.Add(attributeKeys[i], 0);
         }
+    }
+
+    public string ConvertToJSON()
+    {
+        string json = "{\n";
+        json +=
+            "\"timeInitialized\":" + timeInitialized.ToString() + ",\n" +
+            "\"generation\":" + generation.ToString() + ",\n";
+        json += "\"attributes\": {";
+        int counter = 1;
+        foreach(KeyValuePair<string, float> kvp in attributes)
+        {
+            json += "\n\"" + kvp.Key + "\":" + kvp.Value;
+            if (counter != attributes.Count) json += ",";
+            counter++;
+        }
+        json += "}}";
+        return json;
     }
 }
 public enum ProducerType { One, Two, Three }

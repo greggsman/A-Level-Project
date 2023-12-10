@@ -12,7 +12,7 @@ public class ConsumerBehaviour : MonoBehaviour
     private static float mutationMaximum = 10f;
     private void Awake()
     {
-        stats = new ConsumerData(Time.time);
+        stats = new ConsumerData(Time.realtimeSinceStartup);
     }
     private void Start()
     {
@@ -119,5 +119,4 @@ public class ConsumerBehaviour : MonoBehaviour
             if (consumerData.Strength < stats.Strength) Destroy(collisionObject);
         }
     }
-    
 }

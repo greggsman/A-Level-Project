@@ -4,27 +4,31 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 
-class Binarytree<T>
+[Serializable]
+class Binarytree
 {
-    public List<T> nodes;
-    public List<int> leftIndexes;
-    public List<int> rightIndexes;
+    private List<ConsumerData> nodes;
+    private List<int> leftIndexes;
+    private List<int> rightIndexes;
 
-    int defaultIndex;
-    public Binarytree(int defaultValue, T root)
+    private int defaultIndex;
+
+    private int overallTreeIndex;
+    public Binarytree(int defaultValue, ConsumerData root)
     {
         // this is a bit shit so the alternative method is using a Dictionary<T, List<T>> where T is the type you're using and the list represents the children for each element in the tree
-        nodes = new List<T>();
+        nodes = new List<ConsumerData>();
         leftIndexes = new List<int>();
         rightIndexes = new List<int>();
 
-        this.defaultIndex = defaultValue;
+        defaultIndex = defaultValue;
         nodes.Add(root);
         leftIndexes.Add(defaultIndex);
         rightIndexes.Add(defaultIndex);
     }
-    public void AddNode(T additem)
+    public void AddNode(ConsumerData additem)
     {
+        additem.generation = nodes.Count / 2;
         nodes.Add(additem);
         leftIndexes.Add(defaultIndex);
         rightIndexes.Add(defaultIndex);
@@ -50,12 +54,24 @@ class Binarytree<T>
             }
         }
     }
-    public void PreOrderTraversal(int rootIndex)
+    private string TraverseAndConvertToJSON(int rootIndex, ref string overallJson)
     {
-        if (rootIndex == defaultIndex) { return; }
-        // Console.WriteLine(nodes[rootIndex]);
-        PreOrderTraversal(leftIndexes[rootIndex]);
-        PreOrderTraversal(rightIndexes[rootIndex]);
+        if (rootIndex == defaultIndex) return "";
+        string json = nodes[rootIndex].ConvertToJSON();
+        overallJson += json + ",";
+        TraverseAndConvertToJSON(leftIndexes[rootIndex], ref overallJson);
+        TraverseAndConvertToJSON(rightIndexes[rootIndex], ref overallJson);
+        return overallJson;
+    }
+    public string TreeInJSON
+    {
+        get
+        {
+            string consumerDataList = "";
+            consumerDataList = TraverseAndConvertToJSON(0, ref consumerDataList);
+            return "{\n\"Family Tree Index\":" + overallTreeIndex + "," +
+                "\n\"consumers\": [" + consumerDataList.TrimEnd(',') + "]";  
+        }
     }
     public void PrintDebugAdjacencyList()
     {
@@ -67,31 +83,12 @@ class Binarytree<T>
         Debug.Log(message);
     }
 }
-[Serializable]
-class OutputData // for one family tree
-{
-    public string file_ID;
-    public float timeInSeconds;
-    public int consumerPopulation = 0;
-    public int producerPopulation = 0;
-    public List<ConsumerData> consumersInTree;
-    public float pmcc; // correlation
-
-    public OutputData()
-    {
-        DateTime now = DateTime.Now;
-        file_ID = "Snapshot taken " + now.ToLongDateString() + " " + now.ToLongTimeString();
-        consumersInTree = new List<ConsumerData>();
-        pmcc = 1;
-    }
-}
 public class SimulationSystemManager : MonoBehaviour
 {
     public SetOfPreferences jsonPrefences;
 
     private string folderPath;
-    private List<Binarytree<ConsumerData>> familyTrees;
-    private OutputData snapshot;
+    private List<Binarytree> familyTrees;
 
     public GameObject terrainUnit;
     public GameObject consumer;
@@ -123,9 +120,12 @@ public class SimulationSystemManager : MonoBehaviour
     {
         string folderName = Path.DirectorySeparatorChar + "Snapshot_Data" + Path.DirectorySeparatorChar;
         folderPath = Application.persistentDataPath + folderName;
+        if (!Directory.Exists(folderPath)) { Directory.CreateDirectory(folderPath); }
+
         simulationSettings = new Dictionary<string, int>();
         jsonPrefences = DataManager.preferencesToRun;
-        snapshot = new OutputData();
+        familyTrees = new List<Binarytree>();
+
         ReproductionThresholdSlider.minValue = ConsumerData.DefaultEnergyValue * 2f;
         ReproductionThresholdSlider.maxValue = ConsumerData.DefaultEnergyValue * 4f;
         foreach (Preference preference in jsonPrefences.preferences)
@@ -162,15 +162,14 @@ public class SimulationSystemManager : MonoBehaviour
         {
             ConsumerData currentConsumer = SpawnRandom(consumer).GetComponent<ConsumerBehaviour>().stats;
             currentConsumer.StarterOrganism = true;
-            familyTrees.Add(new Binarytree<ConsumerData>(-1, currentConsumer)); // create a new binary tree
+            familyTrees.Add(new Binarytree(-1, currentConsumer)); // create a new binary tree
             currentConsumer.familyTreeIndex = i;
-            snapshot.consumerPopulation++;
+            currentConsumer.generation = 1;
         }
         for (int i = 0; i < simulationSettings["Initial Producer Population"]; i++)
         {
             ProducerBehaviour currentProducer = SpawnRandom(producer).GetComponent<ProducerBehaviour>();
             currentProducer.stats = new ProducerData(ProducerType.One);
-            snapshot.producerPopulation++;
         }
     }
     public GameObject SpawnRandom(GameObject entityPrefab)
@@ -203,9 +202,16 @@ public class SimulationSystemManager : MonoBehaviour
     {
         familyTrees[index].AddNode(newData);
     }
-    public void TakeSnapshot()
+    public void CallOnSnapshot()
     {
-        string filename = folderPath + snapshot.file_ID;
-        Debug.Log(filename);
+        string filename = folderPath + "Snapshot Taken" + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
+        FileStream fileStream = File.Create(filename);
+        using(StreamWriter sw = new StreamWriter(fileStream))
+        {
+            foreach(Binarytree family in familyTrees)
+            {
+                sw.WriteLine(family.TreeInJSON);
+            }
+        }
     }
 }
