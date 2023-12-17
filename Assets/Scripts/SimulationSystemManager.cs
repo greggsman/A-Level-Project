@@ -57,21 +57,9 @@ class Binarytree
     private string TraverseAndConvertToJSON(int rootIndex, ref string overallJson)
     {
         if (rootIndex == defaultIndex) return "";
-        string json = nodes[rootIndex].ConvertToJSON();
-        overallJson += json + ",";
         TraverseAndConvertToJSON(leftIndexes[rootIndex], ref overallJson);
         TraverseAndConvertToJSON(rightIndexes[rootIndex], ref overallJson);
         return overallJson;
-    }
-    public string TreeInJSON
-    {
-        get
-        {
-            string consumerDataList = "";
-            consumerDataList = TraverseAndConvertToJSON(0, ref consumerDataList);
-            return "{\n\"Family Tree Index\":" + overallTreeIndex + "," +
-                "\n\"consumers\": [" + consumerDataList.TrimEnd(',') + "]";  
-        }
     }
     public void PrintDebugAdjacencyList()
     {
@@ -208,10 +196,7 @@ public class SimulationSystemManager : MonoBehaviour
         FileStream fileStream = File.Create(filename);
         using(StreamWriter sw = new StreamWriter(fileStream))
         {
-            foreach(Binarytree family in familyTrees)
-            {
-                sw.WriteLine(family.TreeInJSON);
-            }
+            
         }
     }
 }
