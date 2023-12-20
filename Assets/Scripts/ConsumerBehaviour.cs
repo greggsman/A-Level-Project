@@ -2,6 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+/*
+ * Reproduction issue:
+ * Every so often, the consumer's will reproduce way too much, causing loads of consumers to spawn out of nowhere
+ * which causes the program to crash.
+ * The issue is, when an organism's strength mutates it eats other organisms.
+ * Other organisms spawn as a result, which get eaten by other organisms, which causes them to reproduce.
+ * Suddenly too many organisms are reproducing all at once.
+ * Basically some values need to be tweaked so that the organisms don't respond so rapidly. <3
+ */
 public class ConsumerBehaviour : MonoBehaviour
 {
     public ConsumerData stats; // stats will be provided when organism is born
@@ -49,6 +58,7 @@ public class ConsumerBehaviour : MonoBehaviour
         {
             int indexToMutate = Random.Range(0, ConsumerData.attributeKeys.Length);
             newConsumerData.attributes[ConsumerData.attributeKeys[indexToMutate]] += mutationAmount;
+            Debug.Log("Mutation RNG is " + mutationRNG + ", so this organism is mutating " + ConsumerData.attributeKeys[indexToMutate]);
         }
         ConsumerBehaviour offspring = Instantiate(simulationSystemManager.consumer, newPosition, transform.rotation).GetComponent<ConsumerBehaviour>();
         offspring.stats.attributes = newConsumerData.attributes;
@@ -115,6 +125,7 @@ public class ConsumerBehaviour : MonoBehaviour
         }
         if(collisionObject.tag == "Consumer")
         {
+            Debug.Log("Ate another consumer");
             ConsumerData consumerData = collisionObject.GetComponent<ConsumerBehaviour>().stats;
             if (consumerData.Strength < stats.Strength) Destroy(collisionObject);
             stats.Energy += consumerData.Energy;
