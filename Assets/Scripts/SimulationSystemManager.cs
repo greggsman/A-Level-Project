@@ -12,8 +12,6 @@ class Binarytree
     private List<int> rightIndexes;
 
     private int defaultIndex;
-
-    private int overallTreeIndex;
     public Binarytree(int defaultValue, ConsumerData root)
     {
         // this is a bit shit so the alternative method is using a Dictionary<T, List<T>> where T is the type you're using and the list represents the children for each element in the tree
@@ -54,22 +52,25 @@ class Binarytree
             }
         }
     }
-    private string TraverseAndConvertToJSON(int rootIndex, ref string overallJson)
+    private string TraverseAndConvert(int rootIndex, ref string overallJson)
     {
         if (rootIndex == defaultIndex) return "";
-        TraverseAndConvertToJSON(leftIndexes[rootIndex], ref overallJson);
-        TraverseAndConvertToJSON(rightIndexes[rootIndex], ref overallJson);
+        overallJson += nodes[rootIndex].ConvertToCSV() + "\n";
+        TraverseAndConvert(leftIndexes[rootIndex], ref overallJson);
+        TraverseAndConvert(rightIndexes[rootIndex], ref overallJson);
         return overallJson;
     }
+    // we're not using traverse and convert at the moment
     public void PrintDebugAdjacencyList()
     {
         string message = "";
         for (int i = 0; i < nodes.Count; i++)
         {
-            message += nodes[i] + " " + leftIndexes[i] + " " + rightIndexes[i] + "\n";
+            message += nodes[i].ConvertToCSV() + " " + leftIndexes[i] + " " + rightIndexes[i] + "\n";
         }
         Debug.Log(message);
     }
+    // check using a random value
 }
 public class SimulationSystemManager : MonoBehaviour
 {
@@ -104,6 +105,8 @@ public class SimulationSystemManager : MonoBehaviour
     {
         get { return reproductionThreshold; }
     }
+
+    public float timeSinceInitialization;
     private void Start()
     {
         string folderName = Path.DirectorySeparatorChar + "Snapshot_Data" + Path.DirectorySeparatorChar;
@@ -121,6 +124,7 @@ public class SimulationSystemManager : MonoBehaviour
             simulationSettings.Add(preference.description, preference.value);
         }
         terrainScale = terrainUnit.transform.localScale;
+        timeSinceInitialization = 0f;
         SimulationGenerationInstructions();
     }
     private void Update()
@@ -129,6 +133,7 @@ public class SimulationSystemManager : MonoBehaviour
         MutationChanceText.text = "Mutation chance: " + Math.Round(mutationChance, 2);
         reproductionThreshold = ReproductionThresholdSlider.value;
         ReproductionThresholdText.text = "Reproduction threshold: " + Math.Round(reproductionThreshold, 2);
+        timeSinceInitialization += Time.deltaTime;
     }
     private void SimulationGenerationInstructions()
     {
@@ -192,11 +197,14 @@ public class SimulationSystemManager : MonoBehaviour
     }
     public void CallOnSnapshot()
     {
+        /*
         string filename = folderPath + "Snapshot Taken" + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
         FileStream fileStream = File.Create(filename);
         using(StreamWriter sw = new StreamWriter(fileStream))
         {
             
         }
+        */
+        familyTrees[0].PrintDebugAdjacencyList();
     }
 }

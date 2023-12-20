@@ -10,13 +10,17 @@ public class ConsumerBehaviour : MonoBehaviour
     private SimulationSystemManager simulationSystemManager;
     private static int separationConstant = 2;
     private static float mutationMaximum = 10f;
+    public static void DebugLog(object value)
+    {
+        Debug.Log(value);
+    }
     private void Awake()
     {
-        stats = new ConsumerData(Time.realtimeSinceStartup);
+        simulationSystemManager = FindObjectOfType<SimulationSystemManager>(); // finds the simulation system manager gameobject in the scene
+        stats = new ConsumerData(simulationSystemManager.timeSinceInitialization);
     }
     private void Start()
-    {
-        simulationSystemManager = FindObjectOfType<SimulationSystemManager>(); // finds the simulation system manager gameobject in the scene
+    { 
         if (stats.StarterOrganism)
         {
             foreach (string attributeKey in ConsumerData.attributeKeys)
@@ -117,6 +121,7 @@ public class ConsumerBehaviour : MonoBehaviour
         {
             ConsumerData consumerData = collisionObject.GetComponent<ConsumerBehaviour>().stats;
             if (consumerData.Strength < stats.Strength) Destroy(collisionObject);
+            stats.Energy += consumerData.Energy;
         }
     }
 }

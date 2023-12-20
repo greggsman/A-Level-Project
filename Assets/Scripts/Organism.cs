@@ -37,7 +37,7 @@ public class ConsumerData : Organism
 
     // this data will be serialized
     public int familyTreeIndex;
-    public float timeInitialized;
+    private float timeInitialized;
     public int generation;
     // default value + scale value
     public float Strength
@@ -65,14 +65,21 @@ public class ConsumerData : Organism
         get { return attributes["Maximum Consumption Rate"]; }
         set { attributes["Maximum Consumption Rate"] = value; }
     }
-    public ConsumerData(float timeInitialized) : base()
+    public ConsumerData(float timeInitializedInput) : base()
     {
+        Random r = new Random();
         energy = defaultEnergyValue;
-        this.timeInitialized = timeInitialized;
-        for(int i = 0; i < attributeKeys.Length; i++)
+        timeInitialized = r.Next(0, 100);
+        ConsumerBehaviour.DebugLog("In organism.cs, time initialized is " + timeInitialized.ToString());
+        for (int i = 0; i < attributeKeys.Length; i++)
         {
             attributes.Add(attributeKeys[i], 0);
         }
+    }
+    public string ConvertToCSV() 
+    {
+        return timeInitialized.ToString() + "," + generation.ToString() + "," + Strength.ToString() + "," + Speed.ToString() + ","
+            + Stealth.ToString() + "," + Perceptiveness.ToString() + "," + Maximum_Consumption_Rate.ToString();
     }
 }
 public enum ProducerType { One, Two, Three }
