@@ -26,7 +26,7 @@ public class ConsumerData : Organism
     // fix this
     // proportionality constant rather than default value
 {
-    private static int defaultEnergyValue = 100;
+    private static int defaultEnergyValue = 50;
     public static int DefaultEnergyValue
     {
         get { return defaultEnergyValue; }
@@ -65,12 +65,10 @@ public class ConsumerData : Organism
         get { return attributes["Maximum Consumption Rate"]; }
         set { attributes["Maximum Consumption Rate"] = value; }
     }
-    public ConsumerData(float timeInitializedInput) : base()
+    public ConsumerData(float timeInitialized) : base()
     {
-        Random r = new Random();
         energy = defaultEnergyValue;
-        timeInitialized = r.Next(0, 100);
-        ConsumerBehaviour.DebugLog("In organism.cs, time initialized is " + timeInitialized.ToString());
+        this.timeInitialized = timeInitialized;
         for (int i = 0; i < attributeKeys.Length; i++)
         {
             attributes.Add(attributeKeys[i], 0);

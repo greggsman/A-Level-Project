@@ -8,12 +8,8 @@ public class ConsumerBehaviour : MonoBehaviour
     public int familyIndex;
     public const float energyRegulator = 0.01f;
     private SimulationSystemManager simulationSystemManager;
-    private static int separationConstant = 2;
+    private static int separationConstant = 10;
     private static float mutationMaximum = 10f;
-    public static void DebugLog(object value)
-    {
-        Debug.Log(value);
-    }
     private void Awake()
     {
         simulationSystemManager = FindObjectOfType<SimulationSystemManager>(); // finds the simulation system manager gameobject in the scene
@@ -40,6 +36,7 @@ public class ConsumerBehaviour : MonoBehaviour
         if(stats.Energy > simulationSystemManager.ReproductionThreshold) //Reproduction
         {
             stats.Energy = ConsumerData.DefaultEnergyValue;
+            Debug.Log("reproducing by binary fission");
             Reproduce(simulationSystemManager.MutationChance, Random.Range(-mutationMaximum, mutationMaximum), transform.position + Vector3.left * separationConstant);
             Reproduce(simulationSystemManager.MutationChance, Random.Range(-mutationMaximum, mutationMaximum), transform.position + Vector3.right * separationConstant);
         }
@@ -54,7 +51,7 @@ public class ConsumerBehaviour : MonoBehaviour
             newConsumerData.attributes[ConsumerData.attributeKeys[indexToMutate]] += mutationAmount;
         }
         ConsumerBehaviour offspring = Instantiate(simulationSystemManager.consumer, newPosition, transform.rotation).GetComponent<ConsumerBehaviour>();
-        offspring.stats = newConsumerData;
+        offspring.stats.attributes = newConsumerData.attributes;
         simulationSystemManager.AddToFamilyTrees(stats.familyTreeIndex, offspring.stats); // adds it to the family tree
         Destroy(gameObject);
     }
@@ -86,7 +83,6 @@ public class ConsumerBehaviour : MonoBehaviour
                     }
                     if (nearestConsumerData.stats.Strength < stats.Strength)
                     {
-                        Debug.Log("Chasing");
                         return Vector3.Normalize(surroundingObject.transform.position - transform.position);
                     }
                     if (nearestConsumerData.stats.Strength == stats.Strength) continue;
@@ -123,5 +119,11 @@ public class ConsumerBehaviour : MonoBehaviour
             if (consumerData.Strength < stats.Strength) Destroy(collisionObject);
             stats.Energy += consumerData.Energy;
         }
+    }
+
+
+    public static void DebugLog(object value)
+    {
+        Debug.Log(value);
     }
 }
