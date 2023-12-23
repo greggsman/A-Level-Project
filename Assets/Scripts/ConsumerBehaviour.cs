@@ -39,6 +39,7 @@ public class ConsumerBehaviour : MonoBehaviour
         stats.Energy -= energyRegulator; // loses energy slowly when at a standstill
         if (stats.Energy < Mathf.Abs(stats.Maximum_Consumption_Rate)) // Death
         {
+            simulationSystemManager.livingConsumerPopulation--;
             Destroy(this.gameObject);
         }
 
@@ -60,10 +61,13 @@ public class ConsumerBehaviour : MonoBehaviour
             newConsumerData.attributes[ConsumerData.attributeKeys[indexToMutate]] += mutationAmount;
             Debug.Log("Mutation RNG is " + mutationRNG + ", so this organism is mutating " + ConsumerData.attributeKeys[indexToMutate]);
         }
-        ConsumerBehaviour offspring = Instantiate(simulationSystemManager.consumer, newPosition, transform.rotation).GetComponent<ConsumerBehaviour>();
-        offspring.stats.attributes = newConsumerData.attributes;
-        simulationSystemManager.AddToFamilyTrees(stats.familyTreeIndex, offspring.stats); // adds it to the family tree
+        ConsumerData offspring = Instantiate(simulationSystemManager.consumer, newPosition, transform.rotation).GetComponent<ConsumerBehaviour>().stats;
+        offspring.attributes = newConsumerData.attributes;
+        simulationSystemManager.AddToFamilyTrees(stats.familyTreeIndex, offspring); // adds it to the family tree
+        simulationSystemManager.SpeedStrengthsList.Add(offspring.Strength);
+        simulationSystemManager.StealthPerceptivenessList.Add(offspring.Stealth);
         Destroy(gameObject);
+        simulationSystemManager.livingConsumerPopulation++;
     }
     private void FixedUpdate()
     {
@@ -129,9 +133,9 @@ public class ConsumerBehaviour : MonoBehaviour
             ConsumerData consumerData = collisionObject.GetComponent<ConsumerBehaviour>().stats;
             if (consumerData.Strength < stats.Strength) Destroy(collisionObject);
             stats.Energy += consumerData.Energy;
+            simulationSystemManager.livingConsumerPopulation--;
         }
     }
-
 
     public static void DebugLog(object value)
     {

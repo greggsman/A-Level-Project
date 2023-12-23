@@ -1,17 +1,12 @@
 ﻿<Properties StartupConfiguration="{403FC2B9-A586-FC53-AB01-BC31321D038B}|">
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="ed16822a-73b3-4fc4-82f2-542823cf58a3" />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="60bedae6-b6b8-499c-99b7-5743b4a9f08b" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/SimulationSystemManager.cs">
     <Files>
-      <File FileName="Assets/Scripts/ConsumerBehaviour.cs" Line="20" Column="83" />
-      <File FileName="Assets/Scripts/Organism.cs" Line="26" Column="16" />
-      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="73" Column="34" />
-      <File FileName="Assets/Scripts/DataManager.cs" Line="103" Column="6" />
-      <File FileName="Assets/Scripts/CameraMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/SimulationSystemManager.cs" Line="23" Column="19" />
+      <File FileName="Assets/Scripts/ConsumerBehaviour.cs" Line="134" Column="1" />
+      <File FileName="Assets/Scripts/Organism.cs" Line="45" Column="8" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -35,5 +30,8 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
 </Properties>

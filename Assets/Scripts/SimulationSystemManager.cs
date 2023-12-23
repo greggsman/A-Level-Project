@@ -12,6 +12,8 @@ class Binarytree
     private List<int> rightIndexes;
 
     private int defaultIndex;
+
+    public int FamilyPopulation { get { return nodes.Count; } }
     public Binarytree(int defaultValue, ConsumerData root)
     {
         // this is a bit shit so the alternative method is using a Dictionary<T, List<T>> where T is the type you're using and the list represents the children for each element in the tree
@@ -27,6 +29,7 @@ class Binarytree
     public void AddNode(ConsumerData additem)
     {
         additem.generation = nodes.Count / 2;
+        // doesn't work at the moment, save for testing section
         nodes.Add(additem);
         leftIndexes.Add(defaultIndex);
         rightIndexes.Add(defaultIndex);
@@ -52,13 +55,21 @@ class Binarytree
             }
         }
     }
-    private string TraverseAndConvert(int rootIndex, ref string overallJson)
+    private string CreateCSVRecords(int rootIndex, ref string overallString)
     {
         if (rootIndex == defaultIndex) return "";
-        overallJson += nodes[rootIndex].ConvertToCSV() + "\n";
-        TraverseAndConvert(leftIndexes[rootIndex], ref overallJson);
-        TraverseAndConvert(rightIndexes[rootIndex], ref overallJson);
-        return overallJson;
+        overallString += nodes[rootIndex].ConvertToCSV() + "\n";
+        CreateCSVRecords(leftIndexes[rootIndex], ref overallString);
+        CreateCSVRecords(rightIndexes[rootIndex], ref overallString);
+        return overallString;
+    }
+    public string TreeInCSV
+    {
+        get
+        {
+            string value = "";
+            return value = CreateCSVRecords(0, ref value) + "\n";
+        }
     }
     // we're not using traverse and convert at the moment
     public void PrintDebugAdjacencyList()
@@ -78,6 +89,13 @@ public class SimulationSystemManager : MonoBehaviour
 
     private string folderPath;
     private List<Binarytree> familyTrees;
+    private string fields;
+
+    public int livingConsumerPopulation;
+    public int livingProducerPopulation;
+
+    public List<float> SpeedStrengthsList = new List<float>();
+    public List<float> StealthPerceptivenessList = new List<float>();
 
     public GameObject terrainUnit;
     public GameObject consumer;
@@ -123,8 +141,15 @@ public class SimulationSystemManager : MonoBehaviour
         {
             simulationSettings.Add(preference.description, preference.value);
         }
+        livingConsumerPopulation = simulationSettings["Initial Consumer Population"];
+        livingProducerPopulation = simulationSettings["Initial Producer Population"];
         terrainScale = terrainUnit.transform.localScale;
         timeSinceInitialization = 0f;
+        fields = "Spawn Time, Generation";
+        foreach (string attributeKey in ConsumerData.attributeKeys)
+        {
+            fields += "," + attributeKey;
+        }
         SimulationGenerationInstructions();
     }
     private void Update()
@@ -157,7 +182,9 @@ public class SimulationSystemManager : MonoBehaviour
             currentConsumer.StarterOrganism = true;
             familyTrees.Add(new Binarytree(-1, currentConsumer)); // create a new binary tree
             currentConsumer.familyTreeIndex = i;
-            currentConsumer.generation = 1;
+            currentConsumer.generation = 0;
+            SpeedStrengthsList.Add(currentConsumer.Strength);
+            StealthPerceptivenessList.Add(currentConsumer.Stealth);
         }
         for (int i = 0; i < simulationSettings["Initial Producer Population"]; i++)
         {
@@ -197,14 +224,45 @@ public class SimulationSystemManager : MonoBehaviour
     }
     public void CallOnSnapshot()
     {
-        /*
         string filename = folderPath + "Snapshot Taken" + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
         FileStream fileStream = File.Create(filename);
+        Debug.Log("Saved to " + filename);
+        double StrengthStealthPPMCC = Pearson_Product_Moment_Correlation_Coefficient(SpeedStrengthsList, StealthPerceptivenessList);
         using(StreamWriter sw = new StreamWriter(fileStream))
         {
-            
+            sw.WriteLine("Living Consumer Population " + livingConsumerPopulation);
+            sw.WriteLine("Living Producer Population " + livingProducerPopulation);
+            sw.WriteLine("Running for " + timeSinceInitialization + " seconds");
+            foreach(Binarytree family in familyTrees)
+            {
+                sw.WriteLine("Population of consumers in this family: " + family.FamilyPopulation);
+                sw.WriteLine(fields);
+                sw.WriteLine(family.TreeInCSV);
+            }
+            sw.WriteLine("Correlation between Strength/Speed and Stealth/Perceptiveness: " + StrengthStealthPPMCC.ToString());
         }
-        */
-        familyTrees[0].PrintDebugAdjacencyList();
+        fileStream.Close();
+    }
+    private static double Pearson_Product_Moment_Correlation_Coefficient(List<float> xData, List<float> yData)
+    {
+        float sigmaX = 0;
+        float sigmaY = 0;
+        float sigmaXY = 0;
+        float sigmaXSquared = 0;
+        float sigmaYSquared = 0;
+        int dataSize = xData.Count;
+
+        for(int i = 0; i < dataSize; i++)
+        {
+            sigmaX += xData[i];
+            sigmaY += yData[i];
+            sigmaXY += xData[i] * yData[i];
+            sigmaXSquared += xData[i] * xData[i];
+            sigmaYSquared += yData[i] * yData[i];
+        }
+
+        return (dataSize * sigmaXY) - (sigmaX * sigmaY) /
+            Math.Sqrt((dataSize * sigmaXSquared - sigmaX * sigmaX) *
+            (dataSize * sigmaYSquared - sigmaY * sigmaY));
     }
 }

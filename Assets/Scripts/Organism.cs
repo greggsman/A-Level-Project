@@ -52,7 +52,7 @@ public class ConsumerData : Organism
     }
     public float Stealth
     {
-        get { return defaultEnergyValue + attributes["Stealth/Perceptiveness"]; }
+        get { return attributes["Stealth/Perceptiveness"]; }
         set { attributes["Stealth/Perceptiveness"] = value; }
     }
     public float Perceptiveness
@@ -76,8 +76,12 @@ public class ConsumerData : Organism
     }
     public string ConvertToCSV() 
     {
-        return timeInitialized.ToString() + "," + generation.ToString() + "," + Strength.ToString() + "," + Speed.ToString() + ","
-            + Stealth.ToString() + "," + Perceptiveness.ToString() + "," + Maximum_Consumption_Rate.ToString();
+        string value = timeInitialized.ToString() + "," + generation.ToString();
+        foreach(KeyValuePair<string, float> attribute in attributes)
+        {
+            value += "," + attribute.Value.ToString();
+        }
+        return value;
     }
 }
 public enum ProducerType { One, Two, Three }
