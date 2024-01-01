@@ -16,7 +16,6 @@ class Binarytree
     public int FamilyPopulation { get { return nodes.Count; } }
     public Binarytree(int defaultValue, ConsumerData root)
     {
-        // this is a bit shit so the alternative method is using a Dictionary<T, List<T>> where T is the type you're using and the list represents the children for each element in the tree
         nodes = new List<ConsumerData>();
         leftIndexes = new List<int>();
         rightIndexes = new List<int>();
@@ -94,8 +93,7 @@ public class SimulationSystemManager : MonoBehaviour
     public int livingConsumerPopulation;
     public int livingProducerPopulation;
 
-    public List<float> SpeedStrengthsList = new List<float>();
-    public List<float> StealthPerceptivenessList = new List<float>();
+    public Dictionary<string, List<float>> attributeLists = new Dictionary<string, List<float>>();
 
     public GameObject terrainUnit;
     public GameObject consumer;
@@ -149,6 +147,7 @@ public class SimulationSystemManager : MonoBehaviour
         foreach (string attributeKey in ConsumerData.attributeKeys)
         {
             fields += "," + attributeKey;
+            attributeLists.Add(attributeKey, new List<float>());
         }
         SimulationGenerationInstructions();
     }
@@ -183,8 +182,6 @@ public class SimulationSystemManager : MonoBehaviour
             familyTrees.Add(new Binarytree(-1, currentConsumer)); // create a new binary tree
             currentConsumer.familyTreeIndex = i;
             currentConsumer.generation = 0;
-            SpeedStrengthsList.Add(currentConsumer.Strength);
-            StealthPerceptivenessList.Add(currentConsumer.Stealth);
         }
         for (int i = 0; i < simulationSettings["Initial Producer Population"]; i++)
         {
@@ -227,11 +224,10 @@ public class SimulationSystemManager : MonoBehaviour
         string filename = folderPath + "Snapshot Taken" + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
         FileStream fileStream = File.Create(filename);
         Debug.Log("Saved to " + filename);
-        double StrengthStealthPPMCC = Pearson_Product_Moment_Correlation_Coefficient(SpeedStrengthsList, StealthPerceptivenessList);
         using(StreamWriter sw = new StreamWriter(fileStream))
         {
-            sw.WriteLine("Living Consumer Population " + livingConsumerPopulation);
-            sw.WriteLine("Living Producer Population " + livingProducerPopulation);
+            sw.WriteLine("Living Consumer Population," + livingConsumerPopulation);
+            sw.WriteLine("Living Producer Population," + livingProducerPopulation);
             sw.WriteLine("Running for " + timeSinceInitialization + " seconds");
             foreach(Binarytree family in familyTrees)
             {
@@ -239,14 +235,19 @@ public class SimulationSystemManager : MonoBehaviour
                 sw.WriteLine(fields);
                 sw.WriteLine(family.TreeInCSV);
             }
-            sw.WriteLine("Correlation between Strength/Speed and Stealth/Perceptiveness: " + StrengthStealthPPMCC.ToString());
-        }
+            sw.WriteLine("Correlation between strength/speed and stealth/perceptiveness " +
+                Pearson_Product_Moment_Correlation_Coefficient(attributeLists["Strength/Speed"], attributeLists["Stealth/Perceptiveness"]));
+            sw.WriteLine("Correlation between strength/speed and maximum consumption rate " +
+                Pearson_Product_Moment_Correlation_Coefficient(attributeLists["Strength/Speed"], attributeLists["Maximum Consumption Rate"]));
+            sw.WriteLine("Correlation between stealth/perceptiveness and maximum consumption rate " +
+                Pearson_Product_Moment_Correlation_Coefficient(attributeLists["Stealth/Perceptiveness"], attributeLists["Maximum Consumption Rate"]));
+        };
         fileStream.Close();
     }
     private static double Pearson_Product_Moment_Correlation_Coefficient(List<float> xData, List<float> yData)
     {
         float sigmaX = 0;
-        float sigmaY = 0;
+        float sigmaY = 0;   
         float sigmaXY = 0;
         float sigmaXSquared = 0;
         float sigmaYSquared = 0;

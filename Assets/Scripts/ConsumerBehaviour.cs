@@ -26,12 +26,10 @@ public class ConsumerBehaviour : MonoBehaviour
     }
     private void Start()
     { 
-        if (stats.StarterOrganism)
+        foreach (string attributeKey in ConsumerData.attributeKeys)
         {
-            foreach (string attributeKey in ConsumerData.attributeKeys)
-            {
-                stats.attributes[attributeKey] = simulationSystemManager.simulationSettings[attributeKey];
-            }
+            if(stats.StarterOrganism) stats.attributes[attributeKey] = simulationSystemManager.simulationSettings[attributeKey];
+            simulationSystemManager.attributeLists[attributeKey].Add(stats.attributes[attributeKey]);
         }
     }
     private void Update()
@@ -64,8 +62,6 @@ public class ConsumerBehaviour : MonoBehaviour
         ConsumerData offspring = Instantiate(simulationSystemManager.consumer, newPosition, transform.rotation).GetComponent<ConsumerBehaviour>().stats;
         offspring.attributes = newConsumerData.attributes;
         simulationSystemManager.AddToFamilyTrees(stats.familyTreeIndex, offspring); // adds it to the family tree
-        simulationSystemManager.SpeedStrengthsList.Add(offspring.Strength);
-        simulationSystemManager.StealthPerceptivenessList.Add(offspring.Stealth);
         Destroy(gameObject);
         simulationSystemManager.livingConsumerPopulation++;
     }
