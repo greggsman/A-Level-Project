@@ -23,8 +23,6 @@ public abstract class Organism
     }
 }
 public class ConsumerData : Organism
-    // fix this
-    // proportionality constant rather than default value
 {
     private static int defaultEnergyValue = 50;
     public static int DefaultEnergyValue
@@ -32,7 +30,7 @@ public class ConsumerData : Organism
         get { return defaultEnergyValue; }
     }
     private static int proportionalityConstant = 1000;
-    public static string[] attributeKeys = new string[] { "Strength/Speed", "Stealth/Perceptiveness", "Maximum Consumption Rate" };
+    public static string[] attributeKeys = new string[] { "Strength/Speed", "Stealth/Perceptiveness", "Hunger Limit" };
     public Dictionary<string, float> attributes = new Dictionary<string, float>();
 
     // this data will be serialized
@@ -60,10 +58,10 @@ public class ConsumerData : Organism
         get { return proportionalityConstant / attributes["Stealth/Perceptiveness"]; }
         set { attributes["Stealth/Perceptiveness"] = value; }
     }
-    public float Maximum_Consumption_Rate
+    public float HungerLimit
     {
-        get { return attributes["Maximum Consumption Rate"]; }
-        set { attributes["Maximum Consumption Rate"] = value; }
+        get { return attributes["Hunger Limit"]; }
+        set { attributes["Hunger Limit"] = value; }
     }
     public ConsumerData(float timeInitialized) : base()
     {

@@ -110,6 +110,7 @@ public class SimulationSystemManager : MonoBehaviour
     public Text MutationChanceText;
     public Slider ReproductionThresholdSlider;
     public Text ReproductionThresholdText;
+    public Slider timeScale;
 
     private float mutationChance;
     public float MutationChance
@@ -121,7 +122,6 @@ public class SimulationSystemManager : MonoBehaviour
     {
         get { return reproductionThreshold; }
     }
-
     public float timeSinceInitialization;
     private void Start()
     {
@@ -158,6 +158,7 @@ public class SimulationSystemManager : MonoBehaviour
         reproductionThreshold = ReproductionThresholdSlider.value;
         ReproductionThresholdText.text = "Reproduction threshold: " + Math.Round(reproductionThreshold, 2);
         timeSinceInitialization += Time.deltaTime;
+        Time.timeScale = timeScale.value;
     }
     private void SimulationGenerationInstructions()
     {
@@ -177,7 +178,9 @@ public class SimulationSystemManager : MonoBehaviour
         }
         for (int i = 0; i < simulationSettings["Initial Consumer Population"]; i++) // for CONSUMERS
         {
-            ConsumerData currentConsumer = SpawnRandom(consumer).GetComponent<ConsumerBehaviour>().stats;
+            ConsumerBehaviour cb = SpawnRandom(consumer).GetComponent<ConsumerBehaviour>();
+            cb.gameObject.name += i;
+            ConsumerData currentConsumer = cb.stats;
             currentConsumer.StarterOrganism = true;
             familyTrees.Add(new Binarytree(-1, currentConsumer)); // create a new binary tree
             currentConsumer.familyTreeIndex = i;

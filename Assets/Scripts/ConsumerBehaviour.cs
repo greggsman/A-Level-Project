@@ -16,6 +16,7 @@ public class ConsumerBehaviour : MonoBehaviour
     public ConsumerData stats; // stats will be provided when organism is born
     public int familyIndex;
     public const float energyRegulator = 0.01f;
+    public SphereCollider stealthRange;
     private SimulationSystemManager simulationSystemManager;
     private static int separationConstant = 10;
     private static float mutationMaximum = 10f;
@@ -25,17 +26,18 @@ public class ConsumerBehaviour : MonoBehaviour
         stats = new ConsumerData(simulationSystemManager.timeSinceInitialization);
     }
     private void Start()
-    { 
+    {
         foreach (string attributeKey in ConsumerData.attributeKeys)
         {
-            if(stats.StarterOrganism) stats.attributes[attributeKey] = simulationSystemManager.simulationSettings[attributeKey];
+            if (stats.StarterOrganism) stats.attributes[attributeKey] = simulationSystemManager.simulationSettings[attributeKey];
             simulationSystemManager.attributeLists[attributeKey].Add(stats.attributes[attributeKey]);
         }
+        stealthRange.radius = stats.Perceptiveness;
     }
     private void Update()
     {
         stats.Energy -= energyRegulator; // loses energy slowly when at a standstill
-        if (stats.Energy < Mathf.Abs(stats.Maximum_Consumption_Rate)) // Death
+        if (stats.Energy < Mathf.Abs(stats.HungerLimit)) // Death
         {
             simulationSystemManager.livingConsumerPopulation--;
             Destroy(this.gameObject);
@@ -44,7 +46,7 @@ public class ConsumerBehaviour : MonoBehaviour
         if(stats.Energy > simulationSystemManager.ReproductionThreshold) //Reproduction
         {
             stats.Energy = ConsumerData.DefaultEnergyValue;
-            Debug.Log("reproducing by binary fission");
+            // Debug.Log("reproducing by binary fission");
             Reproduce(simulationSystemManager.MutationChance, Random.Range(-mutationMaximum, mutationMaximum), transform.position + Vector3.left * separationConstant);
             Reproduce(simulationSystemManager.MutationChance, Random.Range(-mutationMaximum, mutationMaximum), transform.position + Vector3.right * separationConstant);
         }
@@ -57,7 +59,7 @@ public class ConsumerBehaviour : MonoBehaviour
         {
             int indexToMutate = Random.Range(0, ConsumerData.attributeKeys.Length);
             newConsumerData.attributes[ConsumerData.attributeKeys[indexToMutate]] += mutationAmount;
-            Debug.Log("Mutation RNG is " + mutationRNG + ", so this organism is mutating " + ConsumerData.attributeKeys[indexToMutate]);
+            // Debug.Log("Mutation RNG is " + mutationRNG + ", so this organism is mutating " + ConsumerData.attributeKeys[indexToMutate]);
         }
         ConsumerData offspring = Instantiate(simulationSystemManager.consumer, newPosition, transform.rotation).GetComponent<ConsumerBehaviour>().stats;
         offspring.attributes = newConsumerData.attributes;
@@ -85,7 +87,8 @@ public class ConsumerBehaviour : MonoBehaviour
             {
                 GameObject surroundingObject = surroundingObjects[i].gameObject;
                 if (surroundingObject.tag == "Consumer")
-                { 
+                {
+                    Debug.Log("My name is " + name + "Found another consumer called " + surroundingObject.name);
                     ConsumerBehaviour nearestConsumerData = surroundingObject.GetComponent<ConsumerBehaviour>();
                     if (nearestConsumerData.stats.Strength > stats.Strength) // run away
                     {
@@ -97,8 +100,9 @@ public class ConsumerBehaviour : MonoBehaviour
                     }
                     if (nearestConsumerData.stats.Strength == stats.Strength) continue;
                 }
-                else // if it finds a consumer
+                else // if it finds a producer
                 {
+                    // Debug.Log("My name is " + name + "Found a producer");
                     allSurroundingsAreEqual = false;
                     Vector3 path = surroundingObject.transform.position - transform.position;
                     if (path.sqrMagnitude < shortestPath.sqrMagnitude) // using sqrMagnitude to avoid sqrRoot every frame update
@@ -120,12 +124,11 @@ public class ConsumerBehaviour : MonoBehaviour
         {
             Destroy(collision.gameObject);
             ProducerData producerBehaviour = collisionObject.GetComponent<ProducerBehaviour>().stats;
-            simulationSystemManager.Respawn(producerBehaviour.type);
+            simulationSystemManager.Resspawn(producerBehaviour.type);
             stats.Energy += producerBehaviour.Energy;
         }
         if(collisionObject.tag == "Consumer")
         {
-            Debug.Log("Ate another consumer");
             ConsumerData consumerData = collisionObject.GetComponent<ConsumerBehaviour>().stats;
             if (consumerData.Strength < stats.Strength) Destroy(collisionObject);
             stats.Energy += consumerData.Energy;
