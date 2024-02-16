@@ -20,6 +20,7 @@ public class ConsumerBehaviour : MonoBehaviour
     private SimulationSystemManager simulationSystemManager;
     private static int separationConstant = 10;
     private static float mutationMaximum = 10f;
+    private const int positionForOrganismDeath = -3;
     private void Awake()
     {
         simulationSystemManager = FindObjectOfType<SimulationSystemManager>(); // finds the simulation system manager gameobject in the scene
@@ -33,12 +34,21 @@ public class ConsumerBehaviour : MonoBehaviour
             simulationSystemManager.attributeLists[attributeKey].Add(stats.attributes[attributeKey]);
         }
         stealthRange.radius = stats.Perceptiveness;
+        if (stats.StarterOrganism)
+        {
+            Debug.Log("Attribute values of this first generation consumer:\n" +
+            "Strength: " + stats.Strength + ", Speed: " + stats.Speed + "\n" +
+            "Stealth: " + stats.Stealth + ", Perceptiveness: " + stats.Perceptiveness + "\n" +
+            "Energy Lost Over Time: " + stats.EnergyLostOverTime + ", Max Energy: " + stats.MaxEnergy); // Testing objective 3.4, 2.6
+        }
     }
     private void Update()
     {
-        stats.Energy -= energyRegulator; // loses energy slowly when at a standstill
-        if (stats.Energy < Mathf.Abs(stats.HungerLimit)) // Death
+        stats.Energy -= stats.EnergyLostOverTime * Time.deltaTime; // loses energy slowly when at a standstill
+        //Debug.Log("Energy " + stats.Energy);
+        if (stats.Energy < simulationSystemManager.MinimumConsumptionLimit) // Death
         {
+            Debug.Log("This organism has run out of energy"); // Testing objective 2.7.2
             simulationSystemManager.livingConsumerPopulation--;
             Destroy(this.gameObject);
         }
@@ -46,76 +56,92 @@ public class ConsumerBehaviour : MonoBehaviour
         if(stats.Energy > simulationSystemManager.ReproductionThreshold) //Reproduction
         {
             stats.Energy = ConsumerData.DefaultEnergyValue;
-            // Debug.Log("reproducing by binary fission");
             Reproduce(simulationSystemManager.MutationChance, Random.Range(-mutationMaximum, mutationMaximum), transform.position + Vector3.left * separationConstant);
             Reproduce(simulationSystemManager.MutationChance, Random.Range(-mutationMaximum, mutationMaximum), transform.position + Vector3.right * separationConstant);
+        }
+
+        if(transform.position.y < positionForOrganismDeath)
+        {
+            Destroy(gameObject);
+            simulationSystemManager.livingConsumerPopulation--;
         }
     }
     private void Reproduce(float mutationChance, float mutationAmount, Vector3 newPosition) // Reproduce One organism
     {
         float mutationRNG = Random.Range(0f, 1f);
         ConsumerData newConsumerData = stats;
-        if (mutationRNG < mutationChance)
+        if (mutationRNG < mutationChance) // If random condition to mutate is met
         {
-            int indexToMutate = Random.Range(0, ConsumerData.attributeKeys.Length);
+            int indexToMutate = Random.Range(0, ConsumerData.attributeKeys.Length); // chooses a random attribute to mutate
             newConsumerData.attributes[ConsumerData.attributeKeys[indexToMutate]] += mutationAmount;
-            // Debug.Log("Mutation RNG is " + mutationRNG + ", so this organism is mutating " + ConsumerData.attributeKeys[indexToMutate]);
+            //mutation amount dictates how much the value should change
+            Debug.Log("Reproducing, with mutation on attribute " + ConsumerData.attributeKeys[indexToMutate]); // testing m
         }
+        else
+        {
+            Debug.Log("Reproducing, no mutation");
+        }
+        // setting new attribute values
         ConsumerData offspring = Instantiate(simulationSystemManager.consumer, newPosition, transform.rotation).GetComponent<ConsumerBehaviour>().stats;
         offspring.attributes = newConsumerData.attributes;
+        // adding this new organism to the correct family trees
         simulationSystemManager.AddToFamilyTrees(stats.familyTreeIndex, offspring); // adds it to the family tree
         Destroy(gameObject);
-        simulationSystemManager.livingConsumerPopulation++;
+        simulationSystemManager.livingConsumerPopulation++; // increase value of living consumers in the scene
     }
     private void FixedUpdate()
     {
         Vector3 movementVector = FindTarget(stats.Perceptiveness);
         transform.position += movementVector * stats.Speed * Time.fixedDeltaTime;
-        transform.LookAt(transform.position + movementVector); 
-        stats.Energy -= (movementVector * stats.Speed).magnitude * energyRegulator; // loses energy faster when moving
+        transform.LookAt(transform.position + movementVector);
+        stats.Energy -= (movementVector * stats.Speed).magnitude * energyRegulator * Time.fixedDeltaTime; // loses energy faster when moving
         // rather than subtract stats.Speed, since that will always be the magnitude as movementVector is normalized,
         // we multiply by movementVector in case movementVector has no magnitude i.e. its at a standstill
     }
     private Vector3 FindTarget(float perceptiveness)
     {
-        List<Collider> surroundingObjects = Physics.OverlapSphere(transform.position, perceptiveness, simulationSystemManager.lm).ToList();
-        bool allSurroundingsAreEqual = true;
-        if(surroundingObjects.Count != 1) // 1 because surroundingObjects arrary still includes this consumer object
+        List<Collider> surroundingObjects = Physics.OverlapSphere(transform.position, perceptiveness, simulationSystemManager.potentialTargetLayer).ToList();
+        // This is the list of targets in the organism's surroundings
+        bool allSurroundingsAreEqual = true; // This will remain true if all surround targets are Consumers and all have the same strength value
+        if(surroundingObjects.Count != 1) // checks if there are anything at all in its surroundings. If not, it will return an empty vector
         {
-            Vector3 shortestPath = new Vector3(perceptiveness, 100, perceptiveness);
-            for(int i = 0; i < surroundingObjects.Count; i++)
+            Vector3 shortestPath = new Vector3(perceptiveness, 100, perceptiveness); // this will store the vector of the nearest producer
+            for(int i = 0; i < surroundingObjects.Count; i++) // examines each detected target separately
             {
                 GameObject surroundingObject = surroundingObjects[i].gameObject;
                 if (surroundingObject.tag == "Consumer")
                 {
-                    Debug.Log("My name is " + name + "Found another consumer called " + surroundingObject.name);
                     ConsumerBehaviour nearestConsumerData = surroundingObject.GetComponent<ConsumerBehaviour>();
-                    if (nearestConsumerData.stats.Strength > stats.Strength) // run away
+                    if (nearestConsumerData.stats.Strength > stats.Strength)
                     {
-                        return Vector3.Normalize(Quaternion.AngleAxis(180f, Vector3.up) * surroundingObject.transform.position); // rotate 180;
+                        // Predator detected, run away
+                        return Vector3.Normalize(Quaternion.AngleAxis(180f, Vector3.up) * surroundingObject.transform.position);
+                        // returns a normalized vector with direction pointing away from the predator 
                     }
                     if (nearestConsumerData.stats.Strength < stats.Strength)
                     {
+                        // Prey detected, move towards it
                         return Vector3.Normalize(surroundingObject.transform.position - transform.position);
                     }
-                    if (nearestConsumerData.stats.Strength == stats.Strength) continue;
+                    if (nearestConsumerData.stats.Strength == stats.Strength) continue; // ignore if its a consumer with the same strength
                 }
-                else // if it finds a producer
+                else
                 {
-                    // Debug.Log("My name is " + name + "Found a producer");
+                    // producer detected, move towards it
                     allSurroundingsAreEqual = false;
                     Vector3 path = surroundingObject.transform.position - transform.position;
                     if (path.sqrMagnitude < shortestPath.sqrMagnitude) // using sqrMagnitude to avoid sqrRoot every frame update
                     {
+                        // if a closer producer is detected, shortes path is reassigned
                         shortestPath = path;
                     }
                 }
             }
-            if (allSurroundingsAreEqual) return Vector3.zero;
-            shortestPath.y = 0f;
+            if (allSurroundingsAreEqual) return Vector3.zero; // If true, do nothing
+            shortestPath.y = 0f; // takes care of issues where the shortest path instructs the organism to move up or down
             return Vector3.Normalize(shortestPath);
         }
-        return Vector3.zero;
+        return Vector3.zero; // if nothing, i.e. no producers or consumers, are detected
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -124,20 +150,21 @@ public class ConsumerBehaviour : MonoBehaviour
         {
             Destroy(collision.gameObject);
             ProducerData producerBehaviour = collisionObject.GetComponent<ProducerBehaviour>().stats;
-            simulationSystemManager.Resspawn(producerBehaviour.type);
             stats.Energy += producerBehaviour.Energy;
+            simulationSystemManager.livingProducerPopulation--;
         }
         if(collisionObject.tag == "Consumer")
         {
             ConsumerData consumerData = collisionObject.GetComponent<ConsumerBehaviour>().stats;
-            if (consumerData.Strength < stats.Strength) Destroy(collisionObject);
+            if (consumerData.Strength < stats.Strength)
+            {
+                Destroy(collisionObject);
+                simulationSystemManager.livingConsumerPopulation--; // when an organism gets eaten
+                Debug.Log("One consumer has eaten another. Predator strength :" + stats.Strength + " + prey strength: " + consumerData.Strength);
+            }
             stats.Energy += consumerData.Energy;
-            simulationSystemManager.livingConsumerPopulation--;
+            // simulationSystemManager.livingConsumerPopulation--;
+            // Testing objective 3.3
         }
-    }
-
-    public static void DebugLog(object value)
-    {
-        Debug.Log(value);
     }
 }

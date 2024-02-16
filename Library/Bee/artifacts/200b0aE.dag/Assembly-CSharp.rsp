@@ -352,10 +352,10 @@
 "Assets/Scripts/ConsumerBehaviour.cs"
 "Assets/Scripts/DataManager.cs"
 "Assets/Scripts/FileUI.cs"
+"Assets/Scripts/HomeMenu.cs"
 "Assets/Scripts/Organism.cs"
 "Assets/Scripts/PreferenceBehaviour.cs"
 "Assets/Scripts/ProducerBehaviour.cs"
-"Assets/Scripts/Setting.cs"
 "Assets/Scripts/SimulationSystemManager.cs"
 "Assets/Scripts/TerrainUnitData.cs"
 -langversion:9.0

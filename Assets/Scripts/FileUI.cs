@@ -27,8 +27,6 @@ public class FileUI : MonoBehaviour
         File.Delete(filePath);
         DataManager dm = FindObjectOfType<DataManager>();
         // reload main menu without deleted file
-        dm.GoToNewPreferenceMenu();
         dm.GoToMainMenu();
-        // IDK why it has to work this way but if you don't go to the new preference menu first it just doesn't work fml
     }
 }

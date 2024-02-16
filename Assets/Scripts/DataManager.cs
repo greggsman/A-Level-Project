@@ -55,6 +55,8 @@ public class DataManager : MonoBehaviour
     private Transform loadPreferencesFromHere;
     private GameObject tooManyFilesWarning;
 
+    private const int sliderMax = 100;
+
     private void Start()
     {
         string folderName = Path.DirectorySeparatorChar + "Preferences_Data" + Path.DirectorySeparatorChar;
@@ -66,6 +68,28 @@ public class DataManager : MonoBehaviour
         loadFilesFromHere = GameObject.Find("LoadFileFromHere").transform;
         loadPreferencesFromHere = GameObject.Find("Load Preferences From Here").transform;
 
+        for (int i = 0; i < ConsumerData.attributeKeys.Length; i++) // NEW 
+        {
+            GameObject currentPreference = Instantiate(initialAttributePreference, loadPreferencesFromHere.position + Vector3.down * (i + 1) * diffBetweenPreferences,
+                initialAttributePreference.transform.rotation, loadPreferencesFromHere);
+
+            string attributeName = ConsumerData.attributeKeys[i];
+            currentPreference.GetComponent<Text>().text = attributeName;
+            currentPreference.name = attributeName;
+
+            Slider slider = currentPreference.GetComponentInChildren<Slider>();
+            if (attributeName == "Max Energy/Hunger")
+            {
+                slider.minValue = 150;
+                slider.maxValue = 400;
+            }
+            else
+            {
+                slider.minValue = ConsumerData.DefaultEnergyValue;
+                slider.maxValue = ConsumerData.DefaultEnergyValue + ConsumerData.DefaultEnergyValue * 2;
+            }
+        }
+
         tooManyFilesWarning = GameObject.Find("too many files");
         tooManyFilesWarning.GetComponent<Text>().text += MaximumNoOfFiles + "!";
         tooManyFilesWarning.SetActive(false);
@@ -76,9 +100,10 @@ public class DataManager : MonoBehaviour
 
     public void SerializeSettings() // serializes user's preferences in JSON, run when Commit Prefences is pressed
     {
-        if(Directory.GetFiles(folderPath).Length >= MaximumNoOfFiles) // using >= because INDEXING STARTS AT 0!!!!
+        if(Directory.GetFiles(folderPath).Length >= MaximumNoOfFiles)
         {
             tooManyFilesWarning.SetActive(true);
+            // UI element informing the user they have created to many files to display on the home page
         }
         else // add a new JSON file
         {
@@ -86,14 +111,13 @@ public class DataManager : MonoBehaviour
             json_preferences.preferences = preferences;
             string currentFilePath = folderPath + json_preferences.file_ID;
             string json = JsonUtility.ToJson(json_preferences, true);
+            // converts the object into Json
 
             FileStream fs = File.Create(currentFilePath);
             using (StreamWriter sw = new StreamWriter(fs)) { sw.WriteLine(json); }
+            // stream writer writes the data into a file
             fs.Close();
-            for (int i = 0; i < loadPreferencesFromHere.childCount; i++) // Destroy all inital attribute preference UI elements
-            {
-                Destroy(loadPreferencesFromHere.GetChild(i).gameObject);
-            } 
+            Debug.Log("File saved to " + folderPath); // Testing objective 2.4
             GoToMainMenu();
         }
     }
@@ -101,11 +125,15 @@ public class DataManager : MonoBehaviour
     public void GoToMainMenu() // called when 'cancel' is pressed
     // Loads the Main Menu scene and loads an option to select each file in the save data folder
     {
+        for (int i = 0; i < loadFilesFromHere.childCount; i++) // Destroy all file UI elementsn (in case files have been deleted)
+        {
+            Destroy(loadFilesFromHere.GetChild(i).gameObject);
+        }
         preferencesSettings.SetActive(false);
         mainMenu.SetActive(true);
         // load UI options for each save file in the main menu
         string[] files = Directory.GetFiles(folderPath);
-        for (int i = 0; i < files.Length; i++)
+        for (int i = 0; i < files.Length; i++) // load files back again
         {
             GameObject currentFileUI = Instantiate(fileUI, loadFilesFromHere.position + Vector3.down * (i + 1) * diffBetweenFileUIs,
                 fileUI.transform.rotation, loadFilesFromHere);
@@ -124,21 +152,6 @@ public class DataManager : MonoBehaviour
         for (int i = 0; i < loadFilesFromHere.childCount; i++) // Destroy all file UI elements
         {
             Destroy(loadFilesFromHere.GetChild(i).gameObject);
-        }
-
-        // First generation attributes
-        for (int i = 0; i < ConsumerData.attributeKeys.Length; i++)
-        {
-            GameObject currentPreference = Instantiate(initialAttributePreference, loadPreferencesFromHere.position + Vector3.down * (i + 1) * diffBetweenPreferences,
-                initialAttributePreference.transform.rotation, loadPreferencesFromHere);
-
-            string attributeName = ConsumerData.attributeKeys[i];
-            currentPreference.GetComponent<Text>().text = attributeName;
-            currentPreference.name = attributeName;
-
-            Slider slider = currentPreference.GetComponentInChildren<Slider>();
-            slider.minValue = 1;
-            slider.maxValue = 100;
         }
     }
 
