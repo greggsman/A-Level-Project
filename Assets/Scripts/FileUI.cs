@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 public class FileUI : MonoBehaviour
 {
     public string filePath;
-    public GameObject simulationManager;
     void Start()
     {
         transform.GetChild(0).GetComponent<Button>().onClick.AddListener(runPreferences);
@@ -18,8 +17,8 @@ public class FileUI : MonoBehaviour
         string contents; // contents of the json file
         using(StreamReader sr = new StreamReader(fs)) { contents = sr.ReadToEnd(); }
         fs.Close();
-        SetOfPreferences sp = JsonUtility.FromJson<SetOfPreferences>(contents);
-        DataManager.preferencesToRun = sp;
+        SetOfPreferences preferencesToRun = JsonUtility.FromJson<SetOfPreferences>(contents);
+        DataManager.preferencesToRun = preferencesToRun;
         SceneManager.LoadScene("Simulation");
     }
     private void DeleteFile()

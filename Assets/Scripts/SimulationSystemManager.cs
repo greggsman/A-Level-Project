@@ -19,7 +19,7 @@ class Binarytree
     private int defaultIndex;
     // the index for when a node has empty locations for children, normally set as -1
 
-    public int FamilyPopulation { get { return nodes.Count; } }
+    public int FamilyPopulation { get { return nodes.Count; } } // abstraction of private list consumer data
     public Binarytree(int defaultValue, ConsumerData root)
     {
         //setting default values for the binary tree
@@ -35,7 +35,7 @@ class Binarytree
     }
     public void AddNode(ConsumerData additem)
     {
-        additem.generation = nodes.Count / 2;
+        additem.generation = (nodes.Count + 1) / 2;
         // doesn't work at the moment, save for testing section
         nodes.Add(additem);
         leftIndexes.Add(defaultIndex);
@@ -67,8 +67,8 @@ class Binarytree
     {
         // overallString is a reference parameter since we want to use the same string on each recursion
         if (rootIndex == defaultIndex) return "";
-        overallString += nodes[rootIndex].ConvertToCSV() + "\n"; // visiting this node and converting to CSV
         CreateCSVRecords(leftIndexes[rootIndex], ref overallString); // Going down left branch
+        overallString += nodes[rootIndex].ConvertToCSV() + "\n"; // visiting this node and converting to CSV
         CreateCSVRecords(rightIndexes[rootIndex], ref overallString); // Goint down right branch
         return overallString;
     }
@@ -89,16 +89,14 @@ public class SimulationSystemManager : MonoBehaviour
     private List<Binarytree> familyTrees;
     private string fields;
 
-    public int livingConsumerPopulation;
-    public int livingProducerPopulation;
-
-    public Dictionary<string, List<float>> attributeLists = new Dictionary<string, List<float>>();
+    public List<List<float>> attributeLists = new List<List<float>>();
 
     public GameObject terrainUnit;
+    public Transform terrain;
     public GameObject consumer;
     public GameObject producer;
 
-    public Dictionary<string, int> simulationSettings;
+    public Dictionary<string, float> simulationSettings;
     public LayerMask potentialTargetLayer;
 
     private TerrainUnitData[,] terrainUnits;
@@ -123,13 +121,14 @@ public class SimulationSystemManager : MonoBehaviour
     public float ReproductionThreshold;
     public float timeSinceInitialization;
     public int MinimumConsumptionLimit;
+
     private void Start()
     {
         string folderName = Path.DirectorySeparatorChar + "Snapshot_Data" + Path.DirectorySeparatorChar;
         folderPath = Application.persistentDataPath + folderName;
         if (!Directory.Exists(folderPath)) { Directory.CreateDirectory(folderPath); }
 
-        simulationSettings = new Dictionary<string, int>();
+        simulationSettings = new Dictionary<string, float>();
         jsonPrefences = DataManager.preferencesToRun;
         familyTrees = new List<Binarytree>();
 
@@ -138,10 +137,6 @@ public class SimulationSystemManager : MonoBehaviour
             simulationSettings.Add(preference.description, preference.value);
         }
         ReproductionThresholdSlider.value = ReproductionThresholdSlider.maxValue;
-
-        livingConsumerPopulation = simulationSettings["Initial Consumer Population"];
-        livingProducerPopulation = simulationSettings["Producer Generation Population"];
-
         terrainScale = terrainUnit.transform.localScale;
         timeSinceInitialization = 0f;
         fields = "Spawn Time, Generation";
@@ -149,7 +144,7 @@ public class SimulationSystemManager : MonoBehaviour
         foreach (string attributeKey in ConsumerData.attributeKeys)
         {
             fields += "," + attributeKey;
-            attributeLists.Add(attributeKey, new List<float>());
+            attributeLists.Add(new List<float>());
         }
         ProducerOne.value = ProducerOne.maxValue;
         SimulationGenerationInstructions();
@@ -175,10 +170,9 @@ public class SimulationSystemManager : MonoBehaviour
         if (spawnAvailable && timeCheck) SpawnProducerGeneration(ProducerOne.value, ProducerTwo.value, ProducerThree.value);
         spawnAvailable = !timeCheck;
     }
-
     private void SimulationGenerationInstructions()
     {
-        terrainSize = simulationSettings["Terrain Size"]; // terrainSize stores the length of one side of the terrain
+        terrainSize = (int)simulationSettings["Terrain Size"]; // terrainSize stores the length of one side of the terrain
         terrainUnits = new TerrainUnitData[terrainSize, terrainSize];
 
         for (int i = 0; i < terrainSize; i++) // generates the a square grid for the terrain and stores each unit in a 2D array
@@ -187,7 +181,7 @@ public class SimulationSystemManager : MonoBehaviour
             {
                 Vector3 newPosition = new Vector3(i, 0f, j); // position of a new terrain unit to be generated
                 terrainUnits[i, j] = Instantiate(terrainUnit, Vector3.Scale(newPosition, terrainScale),
-                    terrainUnit.transform.localRotation).GetComponent<TerrainUnitData>();
+                    terrainUnit.transform.localRotation, parent: terrain).GetComponent<TerrainUnitData>();
                 // new position multiplied by the scale of a terrain unit (set during development)
             }
         }
@@ -229,7 +223,8 @@ public class SimulationSystemManager : MonoBehaviour
     }
     public void SpawnProducerGeneration(float oneProporition, float twoProportion, float threeProportion)
     {
-        int overallProducerPopulation = simulationSettings["Producer Generation Population"];
+        int livingProducerPopulation = FindObjectsOfType<ProducerBehaviour>().Length;
+        int overallProducerPopulation = (int)simulationSettings["Producer Generation Population"];
         int terrainSizeSquared = terrainSize * terrainSize;
         float total = oneProporition + twoProportion + threeProportion;                                                                                            ;
         float valuePerProportion = overallProducerPopulation / total;
@@ -273,8 +268,8 @@ public class SimulationSystemManager : MonoBehaviour
         FileStream fileStream = File.Create(filename);
         using(StreamWriter sw = new StreamWriter(fileStream))
         {
-            sw.WriteLine("Living Consumer Population," + livingConsumerPopulation);
-            sw.WriteLine("Living Producer Population," + livingProducerPopulation);
+            sw.WriteLine("Living Consumer Population," + FindObjectsOfType<ConsumerBehaviour>().Length);
+            sw.WriteLine("Living Producer Population," + FindObjectsOfType<ProducerBehaviour>().Length);
             sw.WriteLine("Running for " + timeSinceInitialization + " seconds");
             foreach(Binarytree family in familyTrees)
             {
@@ -282,16 +277,20 @@ public class SimulationSystemManager : MonoBehaviour
                 sw.WriteLine(fields);
                 sw.WriteLine(family.TreeInCSV);
             }
-            sw.WriteLine("Correlation between strength/speed and stealth/perceptiveness " +
-                Pearson_Product_Moment_Correlation_Coefficient(attributeLists["Strength/Speed"], attributeLists["Stealth/Perceptiveness"]));
-            sw.WriteLine("Correlation between strength/speed and maximum consumption rate " +
-                Pearson_Product_Moment_Correlation_Coefficient(attributeLists["Strength/Speed"], attributeLists["Max Energy/Hunger"]));
-            sw.WriteLine("Correlation between stealth/perceptiveness and maximum consumption rate " +
-                Pearson_Product_Moment_Correlation_Coefficient(attributeLists["Stealth/Perceptiveness"], attributeLists["Max Energy/Hunger"]));
+
+            for(int i = 0; i < attributeLists.Count; i++)
+            {
+                for (int j = i+1; j < attributeLists.Count; j++)
+                // By setting j as i+1, it is comparing elements of the same list together without making the same comparison twice.
+                {
+                    Debug.Log(ConsumerData.attributeKeys[i] + " against " + ConsumerData.attributeKeys[j]);
+                    Debug.Log(PMCC(attributeLists[i], attributeLists[j]).ToString());
+                }
+            }
         };
         fileStream.Close();
     }
-    private static double Pearson_Product_Moment_Correlation_Coefficient(List<float> xData, List<float> yData)
+    private static double PMCC(List<float> xData, List<float> yData)
     {
         float sigmaX = 0;
         float sigmaY = 0;   
@@ -308,10 +307,7 @@ public class SimulationSystemManager : MonoBehaviour
             sigmaXSquared += xData[i] * xData[i];
             sigmaYSquared += yData[i] * yData[i];
         }
-
-        return (dataSize * sigmaXY) - (sigmaX * sigmaY) /
-            Math.Sqrt((dataSize * sigmaXSquared - sigmaX * sigmaX) *
-            (dataSize * sigmaYSquared - sigmaY * sigmaY));
+        return ((dataSize * sigmaXY) - (sigmaX * sigmaY))/(Math.Sqrt((dataSize * sigmaXSquared - sigmaX * sigmaX) * (dataSize * sigmaYSquared - sigmaY * sigmaY)));
     }
     public void ReturnToMenu()
     {

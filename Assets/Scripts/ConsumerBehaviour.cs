@@ -15,10 +15,10 @@ public class ConsumerBehaviour : MonoBehaviour
 {
     public ConsumerData stats; // stats will be provided when organism is born
     public int familyIndex;
-    public const float energyRegulator = 0.01f;
+    private const float energyRegulator = 0.01f;
     public SphereCollider stealthRange;
     private SimulationSystemManager simulationSystemManager;
-    private static int separationConstant = 10;
+    private static int separationConstant = 8;
     private static float mutationMaximum = 10f;
     private const int positionForOrganismDeath = -3;
     private void Awake()
@@ -28,10 +28,10 @@ public class ConsumerBehaviour : MonoBehaviour
     }
     private void Start()
     {
-        foreach (string attributeKey in ConsumerData.attributeKeys)
+        for(int i = 0; i < ConsumerData.attributeKeys.Length; i++)
         {
-            if (stats.StarterOrganism) stats.attributes[attributeKey] = simulationSystemManager.simulationSettings[attributeKey];
-            simulationSystemManager.attributeLists[attributeKey].Add(stats.attributes[attributeKey]);
+            if (stats.StarterOrganism) stats.attributes[ConsumerData.attributeKeys[i]] = simulationSystemManager.simulationSettings[ConsumerData.attributeKeys[i]];
+            simulationSystemManager.attributeLists[i].Add(stats.attributes[ConsumerData.attributeKeys[i]]);
         }
         stealthRange.radius = stats.Perceptiveness;
         if (stats.StarterOrganism)
@@ -49,7 +49,6 @@ public class ConsumerBehaviour : MonoBehaviour
         if (stats.Energy < simulationSystemManager.MinimumConsumptionLimit) // Death
         {
             Debug.Log("This organism has run out of energy"); // Testing objective 2.7.2
-            simulationSystemManager.livingConsumerPopulation--;
             Destroy(this.gameObject);
         }
 
@@ -63,7 +62,6 @@ public class ConsumerBehaviour : MonoBehaviour
         if(transform.position.y < positionForOrganismDeath)
         {
             Destroy(gameObject);
-            simulationSystemManager.livingConsumerPopulation--;
         }
     }
     private void Reproduce(float mutationChance, float mutationAmount, Vector3 newPosition) // Reproduce One organism
@@ -75,7 +73,7 @@ public class ConsumerBehaviour : MonoBehaviour
             int indexToMutate = Random.Range(0, ConsumerData.attributeKeys.Length); // chooses a random attribute to mutate
             newConsumerData.attributes[ConsumerData.attributeKeys[indexToMutate]] += mutationAmount;
             //mutation amount dictates how much the value should change
-            Debug.Log("Reproducing, with mutation on attribute " + ConsumerData.attributeKeys[indexToMutate]); // testing m
+            Debug.Log("Reproducing, with mutation on attribute " + ConsumerData.attributeKeys[indexToMutate]); // testing mutation
         }
         else
         {
@@ -83,11 +81,10 @@ public class ConsumerBehaviour : MonoBehaviour
         }
         // setting new attribute values
         ConsumerData offspring = Instantiate(simulationSystemManager.consumer, newPosition, transform.rotation).GetComponent<ConsumerBehaviour>().stats;
-        offspring.attributes = newConsumerData.attributes;
+        offspring.attributes = newConsumerData.attributes; 
         // adding this new organism to the correct family trees
         simulationSystemManager.AddToFamilyTrees(stats.familyTreeIndex, offspring); // adds it to the family tree
         Destroy(gameObject);
-        simulationSystemManager.livingConsumerPopulation++; // increase value of living consumers in the scene
     }
     private void FixedUpdate()
     {
@@ -151,7 +148,6 @@ public class ConsumerBehaviour : MonoBehaviour
             Destroy(collision.gameObject);
             ProducerData producerBehaviour = collisionObject.GetComponent<ProducerBehaviour>().stats;
             stats.Energy += producerBehaviour.Energy;
-            simulationSystemManager.livingProducerPopulation--;
         }
         if(collisionObject.tag == "Consumer")
         {
@@ -159,12 +155,9 @@ public class ConsumerBehaviour : MonoBehaviour
             if (consumerData.Strength < stats.Strength)
             {
                 Destroy(collisionObject);
-                simulationSystemManager.livingConsumerPopulation--; // when an organism gets eaten
                 Debug.Log("One consumer has eaten another. Predator strength :" + stats.Strength + " + prey strength: " + consumerData.Strength);
             }
             stats.Energy += consumerData.Energy;
-            // simulationSystemManager.livingConsumerPopulation--;
-            // Testing objective 3.3
         }
     }
 }
