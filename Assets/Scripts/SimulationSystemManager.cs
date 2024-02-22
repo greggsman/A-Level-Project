@@ -74,6 +74,7 @@ class Binarytree
     }
     public string TreeInCSV
     {
+        // creating a reference value so there is an empty string that can be passed through CreateCSVRecords()
         get
         {
             string value = "";
@@ -83,9 +84,10 @@ class Binarytree
 }
 public class SimulationSystemManager : MonoBehaviour
 {
+    // global variables declaration
     public SetOfPreferences jsonPrefences;
 
-    private string folderPath;
+    //private string folderPath;
     private List<Binarytree> familyTrees;
     private string fields;
 
@@ -103,6 +105,7 @@ public class SimulationSystemManager : MonoBehaviour
 
     private Vector3 terrainScale;
     private int terrainSize;
+    public int terrainSizeSquared;
 
     public Slider MutationChanceSlider;
     public Text MutationChanceText;
@@ -122,12 +125,10 @@ public class SimulationSystemManager : MonoBehaviour
     public float timeSinceInitialization;
     public int MinimumConsumptionLimit;
 
+    public GameObject OverpopulationUI;
+
     private void Start()
     {
-        string folderName = Path.DirectorySeparatorChar + "Snapshot_Data" + Path.DirectorySeparatorChar;
-        folderPath = Application.persistentDataPath + folderName;
-        if (!Directory.Exists(folderPath)) { Directory.CreateDirectory(folderPath); }
-
         simulationSettings = new Dictionary<string, float>();
         jsonPrefences = DataManager.preferencesToRun;
         familyTrees = new List<Binarytree>();
@@ -147,12 +148,14 @@ public class SimulationSystemManager : MonoBehaviour
             attributeLists.Add(new List<float>());
         }
         ProducerOne.value = ProducerOne.maxValue;
+        OverpopulationUI.SetActive(false);
         SimulationGenerationInstructions();
     }
 
     private bool spawnAvailable = true; // when this is 0, producers can not spawn
     private bool timeCheck = false;
 
+    public bool freeze;
     private void Update()
     {
         MutationChance = MutationChanceSlider.value;
@@ -162,7 +165,8 @@ public class SimulationSystemManager : MonoBehaviour
         MinimumConsumptionLimit = (int) MinimumConsumptionSlider.value;
         MinimumConsumptionText.text = "Minimum Consumption Limit: " + MinimumConsumptionLimit;
 
-        Time.timeScale = timeScale.value;
+        if (freeze) Time.timeScale = 0f;
+        else Time.timeScale = timeScale.value;
         timeSinceInitialization += Time.deltaTime;
         timePassed.text = timeSinceInitialization.ToString() + " seconds";
 
@@ -173,6 +177,7 @@ public class SimulationSystemManager : MonoBehaviour
     private void SimulationGenerationInstructions()
     {
         terrainSize = (int)simulationSettings["Terrain Size"]; // terrainSize stores the length of one side of the terrain
+        terrainSizeSquared = terrainSize * terrainSize;
         terrainUnits = new TerrainUnitData[terrainSize, terrainSize];
 
         for (int i = 0; i < terrainSize; i++) // generates the a square grid for the terrain and stores each unit in a 2D array
@@ -225,7 +230,6 @@ public class SimulationSystemManager : MonoBehaviour
     {
         int livingProducerPopulation = FindObjectsOfType<ProducerBehaviour>().Length;
         int overallProducerPopulation = (int)simulationSettings["Producer Generation Population"];
-        int terrainSizeSquared = terrainSize * terrainSize;
         float total = oneProporition + twoProportion + threeProportion;                                                                                            ;
         float valuePerProportion = overallProducerPopulation / total;
         // splitting the values of the sliders into their relative proportions
@@ -263,8 +267,8 @@ public class SimulationSystemManager : MonoBehaviour
     }
     public void CallOnSnapshot()
     {
-        string filename = folderPath + "Snapshot Taken" + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + ".csv";
-        Debug.Log("Snapshot saved to " + folderPath);
+        string filename = HomeMenu.snapshotFolderPath + "Snapshot Taken" + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + ".csv";
+        Debug.Log("Snapshot saved to " + HomeMenu.snapshotFolderPath);
         FileStream fileStream = File.Create(filename);
         using(StreamWriter sw = new StreamWriter(fileStream))
         {
@@ -283,8 +287,8 @@ public class SimulationSystemManager : MonoBehaviour
                 for (int j = i+1; j < attributeLists.Count; j++)
                 // By setting j as i+1, it is comparing elements of the same list together without making the same comparison twice.
                 {
-                    Debug.Log(ConsumerData.attributeKeys[i] + " against " + ConsumerData.attributeKeys[j]);
-                    Debug.Log(PMCC(attributeLists[i], attributeLists[j]).ToString());
+                    sw.WriteLine("Correlation between " + ConsumerData.attributeKeys[i] + " and " + ConsumerData.attributeKeys[j] + ","
+                        + PMCC(attributeLists[i], attributeLists[j]).ToString());
                 }
             }
         };
@@ -292,25 +296,47 @@ public class SimulationSystemManager : MonoBehaviour
     }
     private static double PMCC(List<float> xData, List<float> yData)
     {
-        float sigmaX = 0;
-        float sigmaY = 0;   
-        float sigmaXY = 0;
-        float sigmaXSquared = 0;
-        float sigmaYSquared = 0;
-        int dataSize = xData.Count;
 
-        for(int i = 0; i < dataSize; i++)
+        float sigmaX = 0;
+        float sigmaY = 0;
+        int dataSize = xData.Count;
+        for (int i = 0; i < dataSize; i++)
         {
             sigmaX += xData[i];
             sigmaY += yData[i];
-            sigmaXY += xData[i] * yData[i];
-            sigmaXSquared += xData[i] * xData[i];
-            sigmaYSquared += yData[i] * yData[i];
         }
-        return ((dataSize * sigmaXY) - (sigmaX * sigmaY))/(Math.Sqrt((dataSize * sigmaXSquared - sigmaX * sigmaX) * (dataSize * sigmaYSquared - sigmaY * sigmaY)));
+        float xMean = sigmaX / dataSize;
+        float yMean = sigmaY / dataSize;
+        float Sxy = 0;
+        float Sxx = 0;
+        float Syy = 0;
+        for (int i = 0; i < dataSize; i++)
+        {
+            float xDeviation = xData[i] - xMean;
+            float yDeviation = yData[i] - yMean;
+            Sxy += xDeviation * yDeviation;
+            Sxx += xDeviation * xDeviation;
+            Syy += yDeviation * yDeviation;
+        }
+        if (Sxx == 0 || Syy == 0) return 0;
+        return Sxy / Math.Sqrt(Sxx * Syy);
     }
     public void ReturnToMenu()
     {
         SceneManager.LoadScene("Preferences");
+    }
+    public static int consumerLimit = 80;
+    public void CheckOverpopulation()
+    {
+        if (FindObjectsOfType<ConsumerBehaviour>().Length > consumerLimit)
+        {
+            freeze = true;
+            Debug.Log("Overpopulation!!!");
+            OverpopulationUI.SetActive(true);
+        }
+    }
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 [Serializable]
 public struct Preference
@@ -42,7 +43,7 @@ public class DataManager : MonoBehaviour
     public event CommitPreferences commitEvent;
     // this event runs when the 'Commit Preferences' button is pressed
 
-    private string folderPath; // path for folder where all the preferences will be stored
+    // private string folderPath; // path for folder where all the preferences will be stored
     private GameObject preferencesSettings; // Parent for the UI for the preferences menu
     private GameObject mainMenu; // Parent for the UI for the main menu
 
@@ -56,12 +57,10 @@ public class DataManager : MonoBehaviour
     private GameObject tooManyFilesWarning;
 
     private const int sliderMax = 100;
-
     private void Start()
     {
-        string folderName = Path.DirectorySeparatorChar + "Preferences_Data" + Path.DirectorySeparatorChar;
-        folderPath = Application.persistentDataPath + folderName; 
-        if (!Directory.Exists(folderPath)) { Directory.CreateDirectory(folderPath); } // If "Preferences_Data" doesn't exist already, create it
+        if (!Directory.Exists(HomeMenu.preferenceFolderPath)) { Directory.CreateDirectory(HomeMenu.preferenceFolderPath); } // If "Preferences_Data" doesn't exist already, create it
+        if (!Directory.Exists(HomeMenu.snapshotFolderPath)) { Directory.CreateDirectory(HomeMenu.snapshotFolderPath); }
 
         preferencesSettings = GameObject.Find("Preferences_Settings");
         mainMenu = GameObject.Find("Main_Menu");
@@ -80,8 +79,8 @@ public class DataManager : MonoBehaviour
             Slider slider = currentPreference.GetComponentInChildren<Slider>();
             if (attributeName == "Max Energy/Hunger")
             {
-                slider.minValue = 150;
-                slider.maxValue = 400;
+                slider.minValue = 250;
+                slider.maxValue = 500;
             }
             else
             {
@@ -100,7 +99,7 @@ public class DataManager : MonoBehaviour
 
     public void SerializeSettings() // serializes user's preferences in JSON, run when Commit Prefences is pressed
     {
-        if(Directory.GetFiles(folderPath).Length >= MaximumNoOfFiles)
+        if(Directory.GetFiles(HomeMenu.preferenceFolderPath).Length >= MaximumNoOfFiles)
         {
             tooManyFilesWarning.SetActive(true);
             // UI element informing the user they have created to many files to display on the home page
@@ -109,15 +108,18 @@ public class DataManager : MonoBehaviour
         {
             SetOfPreferences json_preferences = new SetOfPreferences();
             json_preferences.preferences = preferences;
-            string currentFilePath = folderPath + json_preferences.file_ID;
+            foreach (Preference p in preferences) Debug.Log(p.description);
+            string currentFilePath = HomeMenu.preferenceFolderPath + json_preferences.file_ID;
             string json = JsonUtility.ToJson(json_preferences, true);
+            Debug.Log(json);
             // converts the object into Json
 
             FileStream fs = File.Create(currentFilePath);
             using (StreamWriter sw = new StreamWriter(fs)) { sw.WriteLine(json); }
             // stream writer writes the data into a file
             fs.Close();
-            Debug.Log("File saved to " + folderPath); // Testing objective 2.4
+            Debug.Log("File saved to " + HomeMenu.preferenceFolderPath); // Testing objective 2.4
+            preferences = new List<Preference>();
             GoToMainMenu();
         }
     }
@@ -132,13 +134,13 @@ public class DataManager : MonoBehaviour
         preferencesSettings.SetActive(false);
         mainMenu.SetActive(true);
         // load UI options for each save file in the main menu
-        string[] files = Directory.GetFiles(folderPath);
+        string[] files = Directory.GetFiles(HomeMenu.preferenceFolderPath);
         for (int i = 0; i < files.Length; i++) // load files back again
         {
             GameObject currentFileUI = Instantiate(fileUI, loadFilesFromHere.position + Vector3.down * (i + 1) * diffBetweenFileUIs,
                 fileUI.transform.rotation, loadFilesFromHere);
             currentFileUI.GetComponent<FileUI>().filePath = files[i]; // assigns the filePath for each option in the main menu
-            currentFileUI.GetComponent<Text>().text = files[i].Substring(folderPath.Length); // displays the name of the file in the main menu
+            currentFileUI.GetComponent<Text>().text = files[i].Substring(HomeMenu.preferenceFolderPath.Length); // displays the name of the file in the main menu
         }
     }
 
@@ -159,5 +161,10 @@ public class DataManager : MonoBehaviour
     {
         commitEvent();
         SerializeSettings();
+    }
+
+    public void GoToHomeMenu()
+    {
+        SceneManager.LoadScene("Home Screen");
     }
 }

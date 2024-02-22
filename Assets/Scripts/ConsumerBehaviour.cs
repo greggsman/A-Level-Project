@@ -85,6 +85,7 @@ public class ConsumerBehaviour : MonoBehaviour
         // adding this new organism to the correct family trees
         simulationSystemManager.AddToFamilyTrees(stats.familyTreeIndex, offspring); // adds it to the family tree
         Destroy(gameObject);
+        simulationSystemManager.CheckOverpopulation();
     }
     private void FixedUpdate()
     {
